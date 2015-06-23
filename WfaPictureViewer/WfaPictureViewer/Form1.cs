@@ -9,14 +9,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading; // For 'Thread.Sleep'
+using System.Runtime.InteropServices; // For 'Marshal.Copy'
 
 namespace WfaPictureViewer
 {
     /*
-    * THE VARIABLES CAN NOT BE INITIALISED IN THIS, THEY CAN ONLY BE DECLARED HERE.
-    * QUESTION, Are they prototypes?
+    * CLASS DECLARATION, "Form" is the base class and "Form1" is the derived class. The variables cannot be initialised here, only declared
     */
-    // CLASS DECLARATION, "Form" is the base class and "Form1" is the derived class
     public partial class Form1 : Form
     {
         //Image currentImage; // Container for image that will be displayed
@@ -57,7 +56,7 @@ namespace WfaPictureViewer
             UpdateImgOptions();
             UpdateText();
 
-            menuBrightnessContrast.Enabled = false;
+            //menuBrightnessContrast.Enabled = false;
             menuKanyeQuest.Enabled = false;
 
             // In C#, the square brackets go after the type declaration, not the name
@@ -83,151 +82,11 @@ namespace WfaPictureViewer
         private void Form1_Load(object sender, EventArgs e)
         {                                                         
         }
-         
-        // Known as an "Event Handler" becuase they are called when an event occurs in the program
-        private void chkStretch_CheckedChanged(object sender, EventArgs e)
-        {
-            // Finds out if the box is/isn't checked after a click, and defines image sizing based on that
-            if (chkStretch.Checked)
-            {
-                // The picture box size mode is given the 'stretchimage' property
-                pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-                // Make the font Bold, mimicing the current font's style, but making it bold
-                chkStretch.Font = new Font(chkStretch.Font, FontStyle.Bold);
-                UpdatePicboxInfo();
 
-                //Update though UpdateImgOptions(), because menu items should only be activated if there is actually an image loaded
-                UpdateImgOptions();
-            }
-            else if (chkStretch.Checked == false)
-            {
-                // The picture box size mode is assigned the regular image scaling property
-                pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
-                // Make the font Bold, mimicing the current font's style, but making it not bold
-                chkStretch.Font = new Font(chkStretch.Font, FontStyle.Regular);
-                UpdatePicboxInfo();
-
-                //Update though UpdateImgOptions(), because menu items should only be activated if there is actually an image loaded
-                UpdateImgOptions();
-            }
-        }
-
-        private void UpdatePicboxInfo()
-    {
-        if (pictureBox1.Image != null)
-        {
-            // Writing the file info to the label
-            lblPicInfo.Text = ("File Name: " + pictureBox1.Tag + Environment.NewLine + "H: " + pictureBox1.Image.Height + Environment.NewLine + "W: " + pictureBox1.Image.Width + Environment.NewLine + "Aspect Ratio: " + GetPicBoxRatio() + Environment.NewLine + "Stretching: " + GetRatioDistortion());
-        }
-    }       
-
-        // Method is called whenever upon changing the state of the picturebox. 
-        private void UpdateText()
-        {
-            if (pictureBox1.Image != null)
-            {
-                // Take the first line of the input text file
-                lblPicNotifier.Text = inputFileText[0];
-            }
-            else
-            {
-                // Take the second line of the input text file
-                lblPicNotifier.Text = inputFileText[1];
-            }
-        }
-
-        private void CycleMaximised()
-        {
-            // If the form is not maximised
-            if (this.FormBorderStyle == FormBorderStyle.Sizable && this.WindowState == FormWindowState.Normal)
-            {
-                // Maximise
-                this.TopMost = true;
-                this.FormBorderStyle = FormBorderStyle.None;
-                this.WindowState = FormWindowState.Maximized;
-            }
-            // else if the form IS maximised
-            else if(this.FormBorderStyle == FormBorderStyle.None && this.WindowState == FormWindowState.Maximized)
-            {
-                // Un-maximise (?)
-                this.FormBorderStyle = FormBorderStyle.Sizable;
-                this.WindowState = FormWindowState.Normal;
-            }
-            else
-            {
-                MessageBox.Show("Fullscreening error");
-                this.Close();
-            }
-        }
-
-        private void Form1_PostResize(object sender, EventArgs e)
-        {
-            UpdatePicboxInfo();
-        }
-
-        // Returns the aspect ratio of the image currently loaded in the picBox
-        private float GetPicBoxRatio()
-        {
-            // If there is actually an image loaded
-            if (pictureBox1.Image != null)
-            {
-                // Find out if the stretching is turned on
-                if (chkStretch.Checked == false)
-                {
-                    // The ratio is the width of the image divided by the height
-                    picBoxRatio = (float)pictureBox1.Image.PhysicalDimension.Width / (float)pictureBox1.Image.PhysicalDimension.Height;
-                    return picBoxRatio;
-                }
-                // Or if the stretch checkbox IS checked, instead get the values of the pictureBox itself, as the iamge will match it
-                else 
-                {
-                    picBoxRatio = (float)pictureBox1.Width / (float)pictureBox1.Height;
-                    return picBoxRatio;
-                }
-            }
-            else
-            {
-                return 0.0f;
-            }
-        }
-
-        // Compare the current stretched image's aspect ratio against it's original aspect ratio
-        private string GetRatioDistortion()
-        {
-            // Only run the comparison if image stretching is enabled
-            if (chkStretch.Checked)
-            {
-                // To avoid calling the function multiple times
-                float tempPicBoxRatio = GetPicBoxRatio();
-                float distortion;
-
-                // if the images 'correct' ratio (e.g. 1.43322) is less than current 
-                if (curCorrectRatio < tempPicBoxRatio)
-                {
-                    Console.WriteLine("Correct < Current" + Environment.NewLine + "Correct: " + curCorrectRatio + "Current: " + tempPicBoxRatio);
-                    distortion = curCorrectRatio / tempPicBoxRatio - 1;
-                    return (distortion.ToString("0.000"));
-                }
-                else if(curCorrectRatio > tempPicBoxRatio)
-                {
-                    Console.WriteLine("Correct > Current" + Environment.NewLine + "Correct: " + curCorrectRatio + "Current: " + tempPicBoxRatio);
-                    distortion = curCorrectRatio / tempPicBoxRatio - 1;
-                    return (distortion.ToString("0.000"));
-                }
-                else if (curCorrectRatio == tempPicBoxRatio)
-                {
-                    return "Aspect ratio accurate!";
-                }
-                else
-                {
-                    return "Error";
-                }
-            }
-            else
-            {
-                return "Aspect ratio accurate!";
-            }
-        }
+        /*
+         * EVENT HANDLERS
+         *///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
 
         private void MenuLoadImage_Click(object sender, EventArgs e)
         {
@@ -280,7 +139,7 @@ namespace WfaPictureViewer
             MessageBox.Show("Image copied to clipboard");
         }
 
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void menuClose(object sender, EventArgs e)
         {
             // this (a component that represents the program being run from) runs the 'Close' function
             this.Close();
@@ -313,12 +172,36 @@ namespace WfaPictureViewer
             this.Size = new Size(picWidth + 149, picHeight + 72);
         }
 
-        private void MenuBrightnessContrast_Click(object sender, EventArgs e)
+        // Adjust the Brightness (and eventually Contrast) 
+        private void MenuTransparency(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image != null)
+            {
+                // The byte value is necessary for the image adjustments
+                byte amount = 0;
+                // Creating the Form that will be the dialog box
+                Brightness dlgBright = new Brightness();
+
+                if (dlgBright.ShowDialog() == DialogResult.OK)
+                {
+                    // This method allows the data to be accessed without being public
+                    amount =  dlgBright.getAmount();
+                    pictureBox1.Image = ApplyTransparency(pictureBox1.Image, amount);
+                }
+                else
+                {
+                    MessageBox.Show("Error");
+                }
+                dlgBright.Dispose();
+            }
+        }
+
+        private void menuTest_Click(object sender, EventArgs e)
         {
             // Initialising the new form, using the Form name as the Type. Becuase it is a struct, the 'new' keyword is required.
             // There is a constructor in the testDialog class that takes a Form1 Type, Form1 or "this" is being passed in to that constructor.
             testDialog dlgTest = new testDialog(this);
-            
+
             // "DialogResult" Is a property that is assigned in the designer. 
             if (dlgTest.ShowDialog(this) == DialogResult.OK)
             {
@@ -370,6 +253,155 @@ namespace WfaPictureViewer
             // Because 'Color' is a struct, you cannot assign it 'null', instead the 'Empty' value is assigned.
             colourToTest = Color.Empty;
         }
+
+        // Known as an "Event Handler" becuase they are called when an event occurs in the program
+        private void chkStretch_CheckedChanged(object sender, EventArgs e)
+        {
+            // Finds out if the box is/isn't checked after a click, and defines image sizing based on that
+            if (chkStretch.Checked)
+            {
+                // The picture box size mode is given the 'stretchimage' property
+                pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+                // Make the font Bold, mimicing the current font's style, but making it bold
+                chkStretch.Font = new Font(chkStretch.Font, FontStyle.Bold);
+                UpdatePicboxInfo();
+
+                //Update though UpdateImgOptions(), because menu items should only be activated if there is actually an image loaded
+                UpdateImgOptions();
+            }
+            else if (chkStretch.Checked == false)
+            {
+                // The picture box size mode is assigned the regular image scaling property
+                pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
+                // Make the font Bold, mimicing the current font's style, but making it not bold
+                chkStretch.Font = new Font(chkStretch.Font, FontStyle.Regular);
+                UpdatePicboxInfo();
+
+                //Update though UpdateImgOptions(), because menu items should only be activated if there is actually an image loaded
+                UpdateImgOptions();
+            }
+        }
+
+        /*
+         * METHODS
+         *///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        private void UpdatePicboxInfo()
+        {
+            if (pictureBox1.Image != null)
+            {
+                // Writing the file info to the label
+                lblPicInfo.Text = ("File Name: " + pictureBox1.Tag + Environment.NewLine + "H: " + pictureBox1.Image.Height + Environment.NewLine + "W: " + pictureBox1.Image.Width + Environment.NewLine + "Aspect Ratio: " + GetPicBoxRatio() + Environment.NewLine + "Stretching: " + GetRatioDistortion());
+            }
+        }
+
+        // Method is called whenever upon changing the state of the picturebox. 
+        private void UpdateText()
+        {
+            if (pictureBox1.Image != null)
+            {
+                // Take the first line of the input text file
+                lblPicNotifier.Text = inputFileText[0];
+            }
+            else
+            {
+                // Take the second line of the input text file
+                lblPicNotifier.Text = inputFileText[1];
+            }
+        }
+
+        private void CycleMaximised()
+        {
+            // If the form is not maximised
+            if (this.FormBorderStyle == FormBorderStyle.Sizable && this.WindowState == FormWindowState.Normal)
+            {
+                // Maximise
+                this.TopMost = true;
+                this.FormBorderStyle = FormBorderStyle.None;
+                this.WindowState = FormWindowState.Maximized;
+            }
+            // else if the form IS maximised
+            else if (this.FormBorderStyle == FormBorderStyle.None && this.WindowState == FormWindowState.Maximized)
+            {
+                // Un-maximise (?)
+                this.FormBorderStyle = FormBorderStyle.Sizable;
+                this.WindowState = FormWindowState.Normal;
+            }
+            else
+            {
+                MessageBox.Show("Fullscreening error");
+                this.Close();
+            }
+        }
+
+        private void Form1_PostResize(object sender, EventArgs e)
+        {
+            UpdatePicboxInfo();
+        }
+
+        // Returns the aspect ratio of the image currently loaded in the picBox
+        private float GetPicBoxRatio()
+        {
+            // If there is actually an image loaded
+            if (pictureBox1.Image != null)
+            {
+                // Find out if the stretching is turned on
+                if (chkStretch.Checked == false)
+                {
+                    // The ratio is the width of the image divided by the height
+                    picBoxRatio = (float)pictureBox1.Image.PhysicalDimension.Width / (float)pictureBox1.Image.PhysicalDimension.Height;
+                    return picBoxRatio;
+                }
+                // Or if the stretch checkbox IS checked, instead get the values of the pictureBox itself, as the iamge will match it
+                else
+                {
+                    picBoxRatio = (float)pictureBox1.Width / (float)pictureBox1.Height;
+                    return picBoxRatio;
+                }
+            }
+            else
+            {
+                return 0.0f;
+            }
+        }
+
+        // Compare the current stretched image's aspect ratio against it's original aspect ratio
+        private string GetRatioDistortion()
+        {
+            // Only run the comparison if image stretching is enabled
+            if (chkStretch.Checked)
+            {
+                // To avoid calling the function multiple times
+                float tempPicBoxRatio = GetPicBoxRatio();
+                float distortion;
+
+                // if the images 'correct' ratio (e.g. 1.43322) is less than current 
+                if (curCorrectRatio < tempPicBoxRatio)
+                {
+                    Console.WriteLine("Correct < Current" + Environment.NewLine + "Correct: " + curCorrectRatio + "Current: " + tempPicBoxRatio);
+                    distortion = curCorrectRatio / tempPicBoxRatio - 1;
+                    return (distortion.ToString("0.000"));
+                }
+                else if (curCorrectRatio > tempPicBoxRatio)
+                {
+                    Console.WriteLine("Correct > Current" + Environment.NewLine + "Correct: " + curCorrectRatio + "Current: " + tempPicBoxRatio);
+                    distortion = curCorrectRatio / tempPicBoxRatio - 1;
+                    return (distortion.ToString("0.000"));
+                }
+                else if (curCorrectRatio == tempPicBoxRatio)
+                {
+                    return "Aspect ratio accurate!";
+                }
+                else
+                {
+                    return "Error";
+                }
+            }
+            else
+            {
+                return "Aspect ratio accurate!";
+            }
+        }
  
         // Update options that require an image to be loaded.
         private void UpdateImgOptions()
@@ -379,10 +411,9 @@ namespace WfaPictureViewer
             {
                 menuClearImage.Enabled = true;
                 menuCopyImage.Enabled = true;
-                //menuFitWindow.Enabled = true;
-                //menuResetStretching.Enabled = true;
+                menuTransparency.Enabled = true;
 
-                // Activate or deactivate menu items depending on whether stretching is enabled
+                // Activate or deactivate stretching-specific menu items depending on whether stretching is enabled
                 if (chkStretch.Checked == true)
                 {
                     menuResetStretching.Enabled = true;
@@ -401,6 +432,7 @@ namespace WfaPictureViewer
                 menuCopyImage.Enabled = false;
                 menuFitWindow.Enabled = false;
                 menuResetStretching.Enabled = false;
+                menuTransparency.Enabled = false;
             }
         }
 
@@ -422,6 +454,46 @@ namespace WfaPictureViewer
             return newBmp;
         }
 
+        // Apply transparency to the supplied image, defaulting the value to 100
+        public Bitmap ApplyTransparency(Image sourceImg, byte newAlphaAmount = 100)
+        {
+            // Getting a correctly formatted image from GetArgbVer, This might not be necessary depending on how the picturebox stores the image, will check afterwards. 
+            Bitmap updatedImg = GetArgbVer(sourceImg);
+
+            // Using BitmapData, the Lockbits method can be used to extract the image's pixel pixelData
+            // Lockbits 'locks' a bitmap in to memory
+            BitmapData pixelData = updatedImg.LockBits(new Rectangle(0, 0, sourceImg.Width, sourceImg.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+           
+            // From here on, whenever the pointer is changed, it is changing the data stored at the pointer address
+
+            // A pointer directed at the location of the first pixel read by LockBits. I believe this accesses the B, G, R, A info, as opposed to the pixels themselves
+            IntPtr pixelDataPointer = pixelData.Scan0;
+
+            // Here, an array of all the bytes that make up the pixles is created, The stride is the width of the array when also accounting for the extra buffering area.
+            byte[] pixelByteArray = new byte[pixelData.Stride * pixelData.Height];
+
+            // Now the Marshal.Copy function copies pixel pixelData from pointer > byte array, preparing it for editing
+            Marshal.Copy(pixelDataPointer, pixelByteArray, 0, pixelByteArray.Length);
+
+            for (int i = 3; i < pixelByteArray.Length ; i += 4)
+            {
+                pixelByteArray[i] = newAlphaAmount;
+            }
+
+            // Copy the byte pixelData back to the pointer, noting that the formatting of the 0 moves to follow the array
+            Marshal.Copy(pixelByteArray, 0, pixelDataPointer, pixelByteArray.Length);
+
+            // The data does not have to be passed another step, because the pointer address was pointing to the data all along.
+
+            // The new edited pixels are passed back to the image
+            updatedImg.UnlockBits(pixelData);
+
+            pixelByteArray = null;
+            pixelData = null;
+
+            return updatedImg;
+        }
+
         public void TestFunction(int x)
         {
             MessageBox.Show(x.ToString());
@@ -432,6 +504,5 @@ namespace WfaPictureViewer
         {
             MessageBox.Show("Kanye be takin: " + whatKanyeGot);
         }
-
     }
 }

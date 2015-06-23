@@ -12,3 +12,12 @@ C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\WfaPictureViewer\WfaP
 C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\bin\Debug\WfaPictureViewer.exe.config
 C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.exe
 C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.pdb
+C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\bin\Debug\WfaPictureViewer.exe
+C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\bin\Debug\WfaPictureViewer.pdb
+C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.csprojResolveAssemblyReference.cache
+C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.Form1.resources
+C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.Properties.Resources.resources
+C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.testDialog.resources
+C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.YaMomma.resources
+C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.csproj.GenerateResource.Cache
+C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.Brightness.resources
