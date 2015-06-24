@@ -28,10 +28,6 @@ namespace WfaPictureViewer
         Color defaultBG;
         Bitmap originalImage;
 
-        // Form declarations, to be used as dialogs. The actual Form name is used as the Type, and it's given a name.
-        testDialog dlgTest;
-        YaMomma dlgYaMomma;
-
         /* 
          * HERE, THE VARIABLES ARE INITIALISED, ALONG WITH THE FORM ITSELF, AND SOME OTHER STUFFS
          */
@@ -115,6 +111,17 @@ namespace WfaPictureViewer
             }
         }
 
+        private void MenuSaveImage_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveImg = new SaveFileDialog();
+            saveImg.FileName = pictureBox1.Tag.ToString();
+            saveImg.InitialDirectory = "C:";
+            saveImg.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
+            saveImg.Title = "Save your image";
+            saveImg.ShowDialog();
+
+        }
+
         private void MenuClearImage_Click(object sender, EventArgs e)
         {
             // Clears any image that might be in the pictureBox, and if there isn't any being displayed, opens a messagebox
@@ -139,7 +146,7 @@ namespace WfaPictureViewer
             MessageBox.Show("Image copied to clipboard");
         }
 
-        private void menuClose(object sender, EventArgs e)
+        private void menuClose_Click(object sender, EventArgs e)
         {
             // this (a component that represents the program being run from) runs the 'Close' function
             this.Close();
@@ -182,19 +189,44 @@ namespace WfaPictureViewer
                 // Creating the Form that will be the dialog box
                 Brightness dlgBright = new Brightness();
 
-                if (dlgBright.ShowDialog() == DialogResult.OK)
+                // Result is saved before check, so the result can be checked in more than one bool statement
+                DialogResult dlgResult =  dlgBright.ShowDialog();
+
+                if (dlgResult == DialogResult.OK)
                 {
                     // This method allows the data to be accessed without being public
                     amount =  dlgBright.getAmount();
                     pictureBox1.Image = ApplyTransparency(pictureBox1.Image, amount);
                 }
+                else if(dlgResult == DialogResult.Cancel)
+                {
+                    // Nowt
+                }
                 else
                 {
                     MessageBox.Show("Error");
                 }
+
                 dlgBright.Dispose();
             }
         }
+
+        private void menuGrayscale_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image != null)
+            {
+                pictureBox1.Image = ApplyGrayscale(pictureBox1.Image);
+            }
+        }
+
+        private void menuSepia_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image != null)
+            {
+                pictureBox1.Image = ApplySepia(pictureBox1.Image);
+            }
+
+        }        
 
         private void menuTest_Click(object sender, EventArgs e)
         {
@@ -412,6 +444,9 @@ namespace WfaPictureViewer
                 menuClearImage.Enabled = true;
                 menuCopyImage.Enabled = true;
                 menuTransparency.Enabled = true;
+                menuGrayscale.Enabled = true;
+                menuSepia.Enabled = true;
+                menuSaveImage.Enabled = true;
 
                 // Activate or deactivate stretching-specific menu items depending on whether stretching is enabled
                 if (chkStretch.Checked == true)
@@ -433,6 +468,9 @@ namespace WfaPictureViewer
                 menuFitWindow.Enabled = false;
                 menuResetStretching.Enabled = false;
                 menuTransparency.Enabled = false;
+                menuGrayscale.Enabled = false;
+                menuSepia.Enabled = false;
+                menuSaveImage.Enabled = false;   
             }
         }
 
@@ -469,6 +507,7 @@ namespace WfaPictureViewer
             // A pointer directed at the location of the first pixel read by LockBits. I believe this accesses the B, G, R, A info, as opposed to the pixels themselves
             IntPtr pixelDataPointer = pixelData.Scan0;
 
+            MessageBox.Show(pixelDataPointer.ToString());
             // Here, an array of all the bytes that make up the pixles is created, The stride is the width of the array when also accounting for the extra buffering area.
             byte[] pixelByteArray = new byte[pixelData.Stride * pixelData.Height];
 
@@ -483,7 +522,7 @@ namespace WfaPictureViewer
             // Copy the byte pixelData back to the pointer, noting that the formatting of the 0 moves to follow the array
             Marshal.Copy(pixelByteArray, 0, pixelDataPointer, pixelByteArray.Length);
 
-            // The data does not have to be passed another step, because the pointer address was pointing to the data all along.
+            // The data does not have to be passed to pixelData, because the pointer address was pointing to the data all along.
 
             // The new edited pixels are passed back to the image
             updatedImg.UnlockBits(pixelData);
@@ -492,6 +531,135 @@ namespace WfaPictureViewer
             pixelData = null;
 
             return updatedImg;
+        }
+
+        // Convert the image to Grayscale
+        public Bitmap ApplyGrayscale(Image sourceImg)
+        {
+            // Get a usable Bitmpa from the source image
+            Bitmap updatedImg = GetArgbVer(sourceImg);
+            // Get the bit data from the image and draw it in to imgData
+            BitmapData imgData = updatedImg.LockBits(new Rectangle(0, 0, sourceImg.Width, sourceImg.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            // A pointer is directed to the address of the first piece of data, this is now an int that holds the ARGB data of a given pixel (I think). A printf returns an int
+            IntPtr dataPointer = imgData.Scan0;
+
+            // An EMPTY array that will hold all of the data that makes up the image
+            byte[] pixelByteBuffer = new byte[imgData.Stride * imgData.Height];
+
+            // Copy data from the pointer to the buffer
+            Marshal.Copy(dataPointer, pixelByteBuffer, 0, pixelByteBuffer.Length);
+
+            Grayscale dlgGrayscale = new Grayscale();
+            DialogResult dlgResult;
+            dlgResult =  dlgGrayscale.ShowDialog();
+
+            // This will be used to hold the sum of the RGB values, and will be applied to each in turn
+            float rgb;
+
+            // The 'Luminosity' button is set to "OK".
+            if (dlgResult == DialogResult.OK)
+            {
+                for (int i = 0; i < pixelByteBuffer.Length; i += 4)
+                {
+                    // 'Luminosity' method, places more priority on the green, as our eyes are more sensetive to that part of the spectrum
+                    rgb = pixelByteBuffer[i] * 0.07f;
+                    rgb += pixelByteBuffer[i + 1] * 0.72f;
+                    rgb += pixelByteBuffer[i + 2] * 0.21f;
+
+                    // The'amount of colour' value is given to each element. This syntax means the rgb value only needs to be cast once
+                    pixelByteBuffer[i + 2] = pixelByteBuffer[i + 1] = pixelByteBuffer[i] = (byte)rgb;
+                }
+            }
+            // The 'Average' button is set to "Yes".
+            else if (dlgResult == DialogResult.Yes)
+            {
+                for (int i = 0; i < pixelByteBuffer.Length; i += 4)
+                {
+                    // "Average method", the sum of the partial B, G, and R values gives an average 'amount of colour' value
+                    rgb = (pixelByteBuffer[i] + pixelByteBuffer[i + 1] + pixelByteBuffer[i + 2]) / 3;
+
+                    // The'amount of colour' value is given to each element. This syntax means the rgb value only needs to be cast once
+                    pixelByteBuffer[i + 2] = pixelByteBuffer[i + 1] = pixelByteBuffer[i] = (byte)rgb;
+                }
+            }
+            else
+            {
+                // Nowt.
+            }
+
+            // Copy the data back to the pointer
+            Marshal.Copy(pixelByteBuffer, 0, dataPointer, pixelByteBuffer.Length);
+            
+            updatedImg.UnlockBits(imgData);
+
+            pixelByteBuffer = null;
+            imgData = null;
+
+            return updatedImg;
+        }
+
+        public Bitmap ApplySepia(Image sourceImg)
+        {
+            // Get a Bitmap formatted version of the source image
+            Bitmap convertedImg = GetArgbVer(sourceImg);
+
+            // Lock the pixel data from the source image into imgData, a BitmapData Type container. 
+            BitmapData imgData = convertedImg.LockBits(new Rectangle(0, 0, sourceImg.Width, sourceImg.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            IntPtr dataPointer = imgData.Scan0; 
+
+            byte[] imgBuffer = new byte[imgData.Stride * imgData.Height];
+
+            // give data to buffer
+            Marshal.Copy(dataPointer, imgBuffer, 0, imgBuffer.Length);
+
+            float B;
+            float G;
+            float R;
+
+            // Apply Sepia filtering
+            for (int i = 0; i < imgBuffer.Length; i += 4)
+            {
+
+                // Original RGB values are saved because they are used to construct the new ones and need to stay unchanged.
+                B = 0;
+                G = 0;
+                R = 0;
+
+                B = (imgBuffer[i] * 0.13f + imgBuffer[i + 1] * 0.53f + imgBuffer[i + 2] * 0.27f);
+
+                G = (imgBuffer[i] * 0.16f + imgBuffer[i + 1] * 0.68f + imgBuffer[i + 2] * 0.34f);
+
+                R = (imgBuffer[i] * 0.18f + imgBuffer[i + 1] * 0.76f + imgBuffer[i + 2] * 0.39f);
+
+                if (B > 255)
+                    B = 255;
+
+                if (G > 255)
+                    G = 255;
+
+                if (R > 255)
+                    R = 255;
+
+                imgBuffer[i] = (byte)B;
+
+                imgBuffer[i + 1] = (byte)G;
+
+                imgBuffer[i + 2] = (byte)R;
+
+            }
+
+            // give back to pointer
+            Marshal.Copy(imgBuffer, 0, dataPointer, imgBuffer.Length);
+
+            // give to bitmap type image for return
+            convertedImg.UnlockBits(imgData);
+
+            imgBuffer = null;
+            imgData = null;
+
+            return convertedImg;
         }
 
         public void TestFunction(int x)

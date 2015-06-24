@@ -50,6 +50,12 @@
     <Compile Include="Brightness.Designer.cs">
       <DependentUpon>Brightness.cs</DependentUpon>
     </Compile>
+    <Compile Include="Grayscale.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Grayscale.Designer.cs">
+      <DependentUpon>Grayscale.cs</DependentUpon>
+    </Compile>
     <Compile Include="TestClass.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -76,6 +82,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Grayscale.resx">
+      <DependentUpon>Grayscale.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -43,18 +43,24 @@
             this.menuLoadImage = new System.Windows.Forms.ToolStripMenuItem();
             this.menuClearImage = new System.Windows.Forms.ToolStripMenuItem();
             this.menuCopyImage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSaveImage = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuClose = new System.Windows.Forms.ToolStripMenuItem();
             this.menuImage = new System.Windows.Forms.ToolStripMenuItem();
             this.menuFitWindow = new System.Windows.Forms.ToolStripMenuItem();
             this.menuResetStretching = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuTransparency = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuKanyeQuest = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuGrayscale = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSepia = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.menuTest = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuKanyeQuest = new System.Windows.Forms.ToolStripMenuItem();
             this.menuWindow = new System.Windows.Forms.ToolStripMenuItem();
             this.menuChangeBG = new System.Windows.Forms.ToolStripMenuItem();
             this.menuResetBGColour = new System.Windows.Forms.ToolStripMenuItem();
             this.menuDisplayBGInfo = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveImageDialog = new System.Windows.Forms.SaveFileDialog();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.flowLayoutPanel2.SuspendLayout();
@@ -184,6 +190,7 @@
             this.menuLoadImage,
             this.menuClearImage,
             this.menuCopyImage,
+            this.menuSaveImage,
             this.toolStripSeparator1,
             this.menuClose});
             this.menuFile.Name = "menuFile";
@@ -193,44 +200,55 @@
             // menuLoadImage
             // 
             this.menuLoadImage.Name = "menuLoadImage";
-            this.menuLoadImage.Size = new System.Drawing.Size(137, 22);
+            this.menuLoadImage.Size = new System.Drawing.Size(152, 22);
             this.menuLoadImage.Text = "Load Image";
             this.menuLoadImage.Click += new System.EventHandler(this.MenuLoadImage_Click);
             // 
             // menuClearImage
             // 
             this.menuClearImage.Name = "menuClearImage";
-            this.menuClearImage.Size = new System.Drawing.Size(137, 22);
+            this.menuClearImage.Size = new System.Drawing.Size(152, 22);
             this.menuClearImage.Text = "Clear Image";
             this.menuClearImage.Click += new System.EventHandler(this.MenuClearImage_Click);
             // 
             // menuCopyImage
             // 
             this.menuCopyImage.Name = "menuCopyImage";
-            this.menuCopyImage.Size = new System.Drawing.Size(137, 22);
+            this.menuCopyImage.Size = new System.Drawing.Size(152, 22);
             this.menuCopyImage.Text = "Copy";
             this.menuCopyImage.Click += new System.EventHandler(this.MenuCopyImage_Click);
+            // 
+            // menuSaveImage
+            // 
+            this.menuSaveImage.Name = "menuSaveImage";
+            this.menuSaveImage.Size = new System.Drawing.Size(152, 22);
+            this.menuSaveImage.Text = "Save ";
+            this.menuSaveImage.Click += new System.EventHandler(this.MenuSaveImage_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(134, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // menuClose
             // 
             this.menuClose.Name = "menuClose";
-            this.menuClose.Size = new System.Drawing.Size(137, 22);
+            this.menuClose.Size = new System.Drawing.Size(152, 22);
             this.menuClose.Text = "Close";
-            this.menuClose.Click += new System.EventHandler(this.menuClose);
+            this.menuClose.Click += new System.EventHandler(this.menuClose_Click);
             // 
             // menuImage
             // 
             this.menuImage.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuFitWindow,
             this.menuResetStretching,
+            this.toolStripSeparator2,
             this.menuTransparency,
-            this.menuKanyeQuest,
-            this.menuTest});
+            this.menuGrayscale,
+            this.menuSepia,
+            this.toolStripSeparator3,
+            this.menuTest,
+            this.menuKanyeQuest});
             this.menuImage.Name = "menuImage";
             this.menuImage.Size = new System.Drawing.Size(52, 20);
             this.menuImage.Text = "Image";
@@ -249,6 +267,11 @@
             this.menuResetStretching.Text = "Reset Stretching";
             this.menuResetStretching.Click += new System.EventHandler(this.MenuResetStretching_Click);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(181, 6);
+            // 
             // menuTransparency
             // 
             this.menuTransparency.Name = "menuTransparency";
@@ -256,12 +279,24 @@
             this.menuTransparency.Text = "Transparency";
             this.menuTransparency.Click += new System.EventHandler(this.MenuTransparency);
             // 
-            // menuKanyeQuest
+            // menuGrayscale
             // 
-            this.menuKanyeQuest.Name = "menuKanyeQuest";
-            this.menuKanyeQuest.Size = new System.Drawing.Size(184, 22);
-            this.menuKanyeQuest.Text = "Kanye Quest";
-            this.menuKanyeQuest.Click += new System.EventHandler(this.MenuKanyeQuest_Click);
+            this.menuGrayscale.Name = "menuGrayscale";
+            this.menuGrayscale.Size = new System.Drawing.Size(184, 22);
+            this.menuGrayscale.Text = "Apply Grayscale";
+            this.menuGrayscale.Click += new System.EventHandler(this.menuGrayscale_Click);
+            // 
+            // menuSepia
+            // 
+            this.menuSepia.Name = "menuSepia";
+            this.menuSepia.Size = new System.Drawing.Size(184, 22);
+            this.menuSepia.Text = "Apply Sepia";
+            this.menuSepia.Click += new System.EventHandler(this.menuSepia_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(181, 6);
             // 
             // menuTest
             // 
@@ -269,6 +304,13 @@
             this.menuTest.Size = new System.Drawing.Size(184, 22);
             this.menuTest.Text = "Test";
             this.menuTest.Click += new System.EventHandler(this.menuTest_Click);
+            // 
+            // menuKanyeQuest
+            // 
+            this.menuKanyeQuest.Name = "menuKanyeQuest";
+            this.menuKanyeQuest.Size = new System.Drawing.Size(184, 22);
+            this.menuKanyeQuest.Text = "Kanye Quest";
+            this.menuKanyeQuest.Click += new System.EventHandler(this.MenuKanyeQuest_Click);
             // 
             // menuWindow
             // 
@@ -340,6 +382,7 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem menuFile;
         private System.Windows.Forms.ToolStripMenuItem menuLoadImage;
+        private System.Windows.Forms.ToolStripMenuItem menuSaveImage;
         private System.Windows.Forms.ToolStripMenuItem menuClearImage;
         private System.Windows.Forms.ToolStripMenuItem menuCopyImage;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -350,11 +393,17 @@
         private System.Windows.Forms.ToolStripMenuItem menuChangeBG;
         private System.Windows.Forms.ToolStripMenuItem menuResetStretching;
         private System.Windows.Forms.ToolStripMenuItem menuTransparency;
-        public System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ToolStripMenuItem menuKanyeQuest;
         private System.Windows.Forms.ToolStripMenuItem menuResetBGColour;
         private System.Windows.Forms.ToolStripMenuItem menuDisplayBGInfo;
         private System.Windows.Forms.ToolStripMenuItem menuTest;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem menuGrayscale;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem menuSepia;
+        private System.Windows.Forms.ToolStripMenuItem menuSave;
+        private System.Windows.Forms.SaveFileDialog saveImageDialog;
     }
 }
 
