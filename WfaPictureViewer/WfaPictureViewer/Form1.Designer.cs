@@ -200,40 +200,40 @@
             // menuLoadImage
             // 
             this.menuLoadImage.Name = "menuLoadImage";
-            this.menuLoadImage.Size = new System.Drawing.Size(152, 22);
+            this.menuLoadImage.Size = new System.Drawing.Size(137, 22);
             this.menuLoadImage.Text = "Load Image";
             this.menuLoadImage.Click += new System.EventHandler(this.MenuLoadImage_Click);
             // 
             // menuClearImage
             // 
             this.menuClearImage.Name = "menuClearImage";
-            this.menuClearImage.Size = new System.Drawing.Size(152, 22);
+            this.menuClearImage.Size = new System.Drawing.Size(137, 22);
             this.menuClearImage.Text = "Clear Image";
             this.menuClearImage.Click += new System.EventHandler(this.MenuClearImage_Click);
             // 
             // menuCopyImage
             // 
             this.menuCopyImage.Name = "menuCopyImage";
-            this.menuCopyImage.Size = new System.Drawing.Size(152, 22);
+            this.menuCopyImage.Size = new System.Drawing.Size(137, 22);
             this.menuCopyImage.Text = "Copy";
             this.menuCopyImage.Click += new System.EventHandler(this.MenuCopyImage_Click);
             // 
             // menuSaveImage
             // 
             this.menuSaveImage.Name = "menuSaveImage";
-            this.menuSaveImage.Size = new System.Drawing.Size(152, 22);
+            this.menuSaveImage.Size = new System.Drawing.Size(137, 22);
             this.menuSaveImage.Text = "Save ";
             this.menuSaveImage.Click += new System.EventHandler(this.MenuSaveImage_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(134, 6);
             // 
             // menuClose
             // 
             this.menuClose.Name = "menuClose";
-            this.menuClose.Size = new System.Drawing.Size(152, 22);
+            this.menuClose.Size = new System.Drawing.Size(137, 22);
             this.menuClose.Text = "Close";
             this.menuClose.Click += new System.EventHandler(this.menuClose_Click);
             // 
@@ -393,7 +393,6 @@
         private System.Windows.Forms.ToolStripMenuItem menuChangeBG;
         private System.Windows.Forms.ToolStripMenuItem menuResetStretching;
         private System.Windows.Forms.ToolStripMenuItem menuTransparency;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ToolStripMenuItem menuKanyeQuest;
         private System.Windows.Forms.ToolStripMenuItem menuResetBGColour;
         private System.Windows.Forms.ToolStripMenuItem menuDisplayBGInfo;
@@ -402,8 +401,8 @@
         private System.Windows.Forms.ToolStripMenuItem menuGrayscale;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem menuSepia;
-        private System.Windows.Forms.ToolStripMenuItem menuSave;
         private System.Windows.Forms.SaveFileDialog saveImageDialog;
+        public System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 

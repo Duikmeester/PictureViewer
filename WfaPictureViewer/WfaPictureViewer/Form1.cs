@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading; // For 'Thread.Sleep'
 using System.Runtime.InteropServices; // For 'Marshal.Copy'
+using System.IO; // For 'MemoryStream'
 
 namespace WfaPictureViewer
 {
@@ -27,6 +28,7 @@ namespace WfaPictureViewer
         bool imgIsLoaded;
         Color defaultBG;
         Bitmap originalImage;
+        ImageFormat imgLoadedFormat;
 
         /* 
          * HERE, THE VARIABLES ARE INITIALISED, ALONG WITH THE FORM ITSELF, AND SOME OTHER STUFFS
@@ -91,10 +93,12 @@ namespace WfaPictureViewer
             if (openPictureDialog.ShowDialog() == DialogResult.OK)
             {   //First, load the image in to a bitmap, using the filename from the dialog
                 Bitmap loadedImage = new Bitmap(openPictureDialog.FileName);
-                // Then, load an ARGB version in to the picturebox, also save original image to avoid loading multiple times
+                // Then, load an ARGB version in to the picturebox, also save a version to 'originalImage' to revert to if necessary.
                 pictureBox1.Image = originalImage = GetArgbVer(loadedImage);
                 // Passing the new image's name to the PictureBox1 Tag field
                 pictureBox1.Tag = openPictureDialog.SafeFileName;
+                // Save format to avoid unnessecary conversion later 
+                imgLoadedFormat = loadedImage.RawFormat;
 
                 curCorrectRatio = (float)pictureBox1.Image.Width / (float)pictureBox1.Image.Height;
                 imgIsLoaded = true;
@@ -113,13 +117,51 @@ namespace WfaPictureViewer
 
         private void MenuSaveImage_Click(object sender, EventArgs e)
         {
-            SaveFileDialog saveImg = new SaveFileDialog();
-            saveImg.FileName = pictureBox1.Tag.ToString();
-            saveImg.InitialDirectory = "C:";
-            saveImg.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
-            saveImg.Title = "Save your image";
-            saveImg.ShowDialog();
+            // Creating an instance of the dialog to hold 
+            SaveFileDialog dlgSaveImg = new SaveFileDialog();
+            dlgSaveImg.FileName = pictureBox1.Tag.ToString();
+            dlgSaveImg.InitialDirectory = "C:/Desktop";
+            dlgSaveImg.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
+            dlgSaveImg.Title = "Save your image";
 
+            // Passing the value from the dialog 
+            //myFileStream = (System.IO.FileStream)dlgSaveImg.OpenFile();
+
+            // Only initiate save if OK is received
+            if (dlgSaveImg.ShowDialog() == DialogResult.OK)
+            {
+                // Need to make sure the ARGB version is lossless
+                // Creating a new Bitmap from the picturebox, since the image itself is not accesible, it isn't stored after being created.
+                Bitmap imgConverted = GetArgbVer(pictureBox1.Image);
+
+                // Create a MemoryStream that will be minimally scoped
+                using (MemoryStream memStream = new MemoryStream()) 
+                {
+                    // Save the image to the memorystream in it's native format
+                    imgConverted.Save(memStream, imgLoadedFormat);
+
+                    // Creating an Image that can actually be saved - Should probably make everything up to this point a method
+                    // Should also incorporate some kind of using statement to close off the MemoryStream
+                    Image imgToSave = Image.FromStream(memStream);
+
+                    // FilterIndex appears to record which filetype is selected
+                    switch (dlgSaveImg.FilterIndex)
+                    {
+                        case 1:
+                            imgToSave.Save(dlgSaveImg.FileName, ImageFormat.Jpeg);
+                            break;
+                        case 2:
+                            imgToSave.Save(dlgSaveImg.FileName, ImageFormat.Bmp);
+                            break;
+                        case 3:
+                            imgToSave.Save(dlgSaveImg.FileName, ImageFormat.Png);
+                            break;
+                        case 4:
+                            imgToSave.Save(dlgSaveImg.FileName, ImageFormat.Tiff);
+                            break;
+                    }
+                }
+            }
         }
 
         private void MenuClearImage_Click(object sender, EventArgs e)
@@ -318,6 +360,42 @@ namespace WfaPictureViewer
          * METHODS
          *///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        // A method for converting an image in to 
+        public byte[] ImgToByteArray (Image imgIn)
+        {
+            MemoryStream ms = new MemoryStream();
+            MessageBox.Show(imgIn.ToString());
+            // The image is saved to the MemoryStream in it's native format
+            imgIn.Save(ms, imgIn.RawFormat);
+
+            // The MemoryStream is converted to a byte array and returned
+            return ms.ToArray();
+        }
+
+        public byte[] getByteArray (Image imgIn)
+        {
+            // Getting a correctly formatted image from GetArgbVer, This might not be necessary depending on how the picturebox stores the image, will check afterwards. 
+            Bitmap updatedImg = GetArgbVer(imgIn);
+
+            // Using BitmapData, the Lockbits method can be used to extract the image's pixel pixelData
+            // Lockbits 'locks' a bitmap in to memory
+            BitmapData pixelData = updatedImg.LockBits(new Rectangle(0, 0, imgIn.Width, imgIn.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            // From here on, whenever the pointer is changed, it is changing the data stored at the pointer address
+
+            // A pointer directed at the location of the first pixel read by LockBits. I believe this accesses the B, G, R, A info, as opposed to the pixels themselves
+            IntPtr pixelDataPointer = pixelData.Scan0;
+
+            MessageBox.Show(pixelDataPointer.ToString());
+            // Here, an array of all the bytes that make up the pixles is created, The stride is the width of the array when also accounting for the extra buffering area.
+            byte[] pixelByteArray = new byte[pixelData.Stride * pixelData.Height];
+
+            Marshal.Copy(pixelDataPointer, pixelByteArray, 0, pixelByteArray.Length);
+
+            return pixelByteArray;
+            
+        }
+
         private void UpdatePicboxInfo()
         {
             if (pictureBox1.Image != null)
@@ -477,7 +555,7 @@ namespace WfaPictureViewer
         // Converts an image into 32bit ARGB format for editing
         public Bitmap GetArgbVer(Image sourceImg)
         {
-            // Here, the variable is created, matching the size of the source image
+            // Here, the Bitmap is created, matching the size of the source image
             Bitmap newBmp = new Bitmap (sourceImg.Width, sourceImg.Height,  PixelFormat.Format32bppArgb);
 
             // DISCLAIMER: I dont fully understand the following code
@@ -485,7 +563,7 @@ namespace WfaPictureViewer
             // The image still hasn't been drawn here yet, gfx is now created and associated with newBmp (which is still just a container)
             using(Graphics gfx = Graphics.FromImage(newBmp))
             {
-                // I can see the source image and two rectangles being drawn to the same size as the source image. 
+                // Here, the DrawImage function is able to draw based on an existing image. 
                 gfx.DrawImage(sourceImg, new Rectangle(0, 0, newBmp.Width, newBmp.Height), new Rectangle(0, 0, newBmp.Width, newBmp.Height), GraphicsUnit.Pixel);
                 gfx.Flush();
             }
@@ -664,13 +742,14 @@ namespace WfaPictureViewer
 
         public void TestFunction(int x)
         {
-            MessageBox.Show(x.ToString());
-            chkStretch.Checked = !chkStretch.Checked;
+            MessageBox.Show(pictureBox1.Image.ToString());
+            //MessageBox.Show(x.ToString());
+            //chkStretch.Checked = !chkStretch.Checked;
         }
 
         public void TestFunction2(string whatKanyeGot)
         {
-            MessageBox.Show("Kanye be takin: " + whatKanyeGot);
+            
         }
     }
 }
