@@ -47,13 +47,16 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuClose = new System.Windows.Forms.ToolStripMenuItem();
             this.menuImage = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuFitWindow = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuResetStretching = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuTransparency = new System.Windows.Forms.ToolStripMenuItem();
             this.menuGrayscale = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSepia = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuResetAdjustments = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuRestImage = new System.Windows.Forms.ToolStripSeparator();
+            this.menuExportChannels = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuFitWindow = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuResetStretching = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuTest = new System.Windows.Forms.ToolStripMenuItem();
             this.menuKanyeQuest = new System.Windows.Forms.ToolStripMenuItem();
             this.menuWindow = new System.Windows.Forms.ToolStripMenuItem();
@@ -240,75 +243,97 @@
             // menuImage
             // 
             this.menuImage.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuFitWindow,
-            this.menuResetStretching,
-            this.toolStripSeparator2,
             this.menuTransparency,
             this.menuGrayscale,
             this.menuSepia,
+            this.menuResetAdjustments,
+            this.menuRestImage,
+            this.menuExportChannels,
             this.toolStripSeparator3,
+            this.menuFitWindow,
+            this.menuResetStretching,
+            this.toolStripSeparator2,
             this.menuTest,
             this.menuKanyeQuest});
             this.menuImage.Name = "menuImage";
             this.menuImage.Size = new System.Drawing.Size(52, 20);
             this.menuImage.Text = "Image";
             // 
-            // menuFitWindow
-            // 
-            this.menuFitWindow.Name = "menuFitWindow";
-            this.menuFitWindow.Size = new System.Drawing.Size(184, 22);
-            this.menuFitWindow.Text = "Fit Window to Image";
-            this.menuFitWindow.Click += new System.EventHandler(this.menuFitWindow_Click);
-            // 
-            // menuResetStretching
-            // 
-            this.menuResetStretching.Name = "menuResetStretching";
-            this.menuResetStretching.Size = new System.Drawing.Size(184, 22);
-            this.menuResetStretching.Text = "Reset Stretching";
-            this.menuResetStretching.Click += new System.EventHandler(this.MenuResetStretching_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(181, 6);
-            // 
             // menuTransparency
             // 
             this.menuTransparency.Name = "menuTransparency";
-            this.menuTransparency.Size = new System.Drawing.Size(184, 22);
+            this.menuTransparency.Size = new System.Drawing.Size(208, 22);
             this.menuTransparency.Text = "Transparency";
             this.menuTransparency.Click += new System.EventHandler(this.MenuTransparency);
             // 
             // menuGrayscale
             // 
             this.menuGrayscale.Name = "menuGrayscale";
-            this.menuGrayscale.Size = new System.Drawing.Size(184, 22);
+            this.menuGrayscale.Size = new System.Drawing.Size(208, 22);
             this.menuGrayscale.Text = "Apply Grayscale";
             this.menuGrayscale.Click += new System.EventHandler(this.menuGrayscale_Click);
             // 
             // menuSepia
             // 
             this.menuSepia.Name = "menuSepia";
-            this.menuSepia.Size = new System.Drawing.Size(184, 22);
+            this.menuSepia.Size = new System.Drawing.Size(208, 22);
             this.menuSepia.Text = "Apply Sepia";
             this.menuSepia.Click += new System.EventHandler(this.menuSepia_Click);
+            // 
+            // menuResetAdjustments
+            // 
+            this.menuResetAdjustments.Name = "menuResetAdjustments";
+            this.menuResetAdjustments.Size = new System.Drawing.Size(208, 22);
+            this.menuResetAdjustments.Text = "Reset Image Adjustments";
+            this.menuResetAdjustments.Click += new System.EventHandler(this.menuResetAdjustments_Click);
+            // 
+            // menuRestImage
+            // 
+            this.menuRestImage.Name = "menuRestImage";
+            this.menuRestImage.Size = new System.Drawing.Size(205, 6);
+            // 
+            // menuExportChannels
+            // 
+            this.menuExportChannels.Name = "menuExportChannels";
+            this.menuExportChannels.Size = new System.Drawing.Size(208, 22);
+            this.menuExportChannels.Text = "Export Channlels";
+            this.menuExportChannels.Click += new System.EventHandler(this.menuExportChannels_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(181, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(205, 6);
+            // 
+            // menuFitWindow
+            // 
+            this.menuFitWindow.Name = "menuFitWindow";
+            this.menuFitWindow.Size = new System.Drawing.Size(208, 22);
+            this.menuFitWindow.Text = "Fit Window to Image";
+            this.menuFitWindow.Click += new System.EventHandler(this.menuFitWindow_Click);
+            // 
+            // menuResetStretching
+            // 
+            this.menuResetStretching.Name = "menuResetStretching";
+            this.menuResetStretching.Size = new System.Drawing.Size(208, 22);
+            this.menuResetStretching.Text = "Reset Stretching";
+            this.menuResetStretching.Click += new System.EventHandler(this.MenuResetStretching_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(205, 6);
             // 
             // menuTest
             // 
             this.menuTest.Name = "menuTest";
-            this.menuTest.Size = new System.Drawing.Size(184, 22);
+            this.menuTest.Size = new System.Drawing.Size(208, 22);
             this.menuTest.Text = "Test";
             this.menuTest.Click += new System.EventHandler(this.menuTest_Click);
             // 
             // menuKanyeQuest
             // 
             this.menuKanyeQuest.Name = "menuKanyeQuest";
-            this.menuKanyeQuest.Size = new System.Drawing.Size(184, 22);
+            this.menuKanyeQuest.Size = new System.Drawing.Size(208, 22);
             this.menuKanyeQuest.Text = "Kanye Quest";
             this.menuKanyeQuest.Click += new System.EventHandler(this.MenuKanyeQuest_Click);
             // 
@@ -399,10 +424,13 @@
         private System.Windows.Forms.ToolStripMenuItem menuTest;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem menuGrayscale;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripSeparator menuRestImage;
         private System.Windows.Forms.ToolStripMenuItem menuSepia;
         private System.Windows.Forms.SaveFileDialog saveImageDialog;
         public System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.ToolStripMenuItem menuResetAdjustments;
+        private System.Windows.Forms.ToolStripMenuItem menuExportChannels;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }
 

@@ -19,16 +19,13 @@ namespace WfaPictureViewer
     */
     public partial class Form1 : Form
     {
-        //Image currentImage; // Container for image that will be displayed
-        //int len; // Used for loops, will contain the size of the array
-        //int[] curSize;
         string[] inputFileText = System.IO.File.ReadAllLines(@"..\..\input.txt"); // Initialise an array of each line of the input file
         float curCorrectRatio;
         float picBoxRatio;
-        bool imgIsLoaded;
         Color defaultBG;
-        Bitmap originalImage;
-        ImageFormat imgLoadedFormat;
+        Bitmap originalImg; // The image when loaded, ARGB
+        Bitmap currentImg; // The image being displayed, ARGB
+        ImageFormat originalImgFormat;
 
         /* 
          * HERE, THE VARIABLES ARE INITIALISED, ALONG WITH THE FORM ITSELF, AND SOME OTHER STUFFS
@@ -43,10 +40,9 @@ namespace WfaPictureViewer
             this.KeyPress += new KeyPressEventHandler(Form1_KeyPressReg);
 
             // "Size" is a struct, so you can't simply declare this.MinimumSize.Size = x,y
-            this.MinimumSize = new Size(580, 100);
+            this.MinimumSize = new Size(200, 100);
             // Bool initialisors
             chkAspectLock.Enabled = false;
-            imgIsLoaded = false;
             // BG Colour stuff
             defaultBG = BackColor;
             menuResetBGColour.Enabled = false;
@@ -88,80 +84,85 @@ namespace WfaPictureViewer
 
         private void MenuLoadImage_Click(object sender, EventArgs e)
         {
-            // this -------------V part actually opens the dialog, it is held within the if() statement. 
             // only opens if the V user clicks OK
             if (openPictureDialog.ShowDialog() == DialogResult.OK)
             {   //First, load the image in to a bitmap, using the filename from the dialog
-                Bitmap loadedImage = new Bitmap(openPictureDialog.FileName);
-                // Then, load an ARGB version in to the picturebox, also save a version to 'originalImage' to revert to if necessary.
-                pictureBox1.Image = originalImage = GetArgbVer(loadedImage);
+                Bitmap loadedImg = new Bitmap(openPictureDialog.FileName);
                 // Passing the new image's name to the PictureBox1 Tag field
                 pictureBox1.Tag = openPictureDialog.SafeFileName;
-                // Save format to avoid unnessecary conversion later 
-                imgLoadedFormat = loadedImage.RawFormat;
+                originalImg = loadedImg;
+                UpdatePicBox(originalImg);
+                //       format to avoid unnessecary conversion later 
+                originalImgFormat = originalImg.RawFormat;
+            }
+        }
 
-                curCorrectRatio = (float)pictureBox1.Image.Width / (float)pictureBox1.Image.Height;
-                imgIsLoaded = true;
-                UpdateImgOptions();
-                
-                // Updating the display info
-                UpdatePicboxInfo();
-                UpdateText();
+        // Update the picbox with a passed image, ususally straight from the Load event ^
+        private void UpdatePicBox(Bitmap img)
+        {
+            // Assign an ARGB version of originalImg to current and picbox
+            pictureBox1.Image = currentImg = GetArgbVer(img);
 
-                if (chkAutoscaleLoad.Checked)
-                {
-                    menuFitWindow.PerformClick();
-                }
+            curCorrectRatio = (float)pictureBox1.Image.Width / (float)pictureBox1.Image.Height;
+            UpdateImgOptions();
+
+            // Updating the display info
+            UpdatePicboxInfo();
+            UpdateText();
+
+            if (chkAutoscaleLoad.Checked)
+            {
+                menuFitWindow.PerformClick();
             }
         }
 
         private void MenuSaveImage_Click(object sender, EventArgs e)
         {
             // Creating an instance of the dialog to hold 
-            SaveFileDialog dlgSaveImg = new SaveFileDialog();
-            dlgSaveImg.FileName = pictureBox1.Tag.ToString();
-            dlgSaveImg.InitialDirectory = "C:/Desktop";
-            dlgSaveImg.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
-            dlgSaveImg.Title = "Save your image";
-
-            // Passing the value from the dialog 
-            //myFileStream = (System.IO.FileStream)dlgSaveImg.OpenFile();
-
-            // Only initiate save if OK is received
-            if (dlgSaveImg.ShowDialog() == DialogResult.OK)
+            using(SaveFileDialog dlgSaveImg = new SaveFileDialog())
             {
-                // Need to make sure the ARGB version is lossless
-                // Creating a new Bitmap from the picturebox, since the image itself is not accesible, it isn't stored after being created.
-                Bitmap imgConverted = GetArgbVer(pictureBox1.Image);
-
-                // Create a MemoryStream that will be minimally scoped
-                using (MemoryStream memStream = new MemoryStream()) 
+                dlgSaveImg.FileName = pictureBox1.Tag.ToString();
+                dlgSaveImg.InitialDirectory = "C:/Desktop";
+                dlgSaveImg.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
+                dlgSaveImg.Title = "Save Your Image";
+            
+                // Only initiate save if OK is received
+                if (dlgSaveImg.ShowDialog() == DialogResult.OK)
                 {
-                    // Save the image to the memorystream in it's native format
-                    imgConverted.Save(memStream, imgLoadedFormat);
-
-                    // Creating an Image that can actually be saved - Should probably make everything up to this point a method
-                    // Should also incorporate some kind of using statement to close off the MemoryStream
-                    Image imgToSave = Image.FromStream(memStream);
-
-                    // FilterIndex appears to record which filetype is selected
-                    switch (dlgSaveImg.FilterIndex)
-                    {
-                        case 1:
-                            imgToSave.Save(dlgSaveImg.FileName, ImageFormat.Jpeg);
-                            break;
-                        case 2:
-                            imgToSave.Save(dlgSaveImg.FileName, ImageFormat.Bmp);
-                            break;
-                        case 3:
-                            imgToSave.Save(dlgSaveImg.FileName, ImageFormat.Png);
-                            break;
-                        case 4:
-                            imgToSave.Save(dlgSaveImg.FileName, ImageFormat.Tiff);
-                            break;
-                    }
+                    SaveImage(dlgSaveImg, currentImg);
                 }
             }
+        }
+
+        private void SaveImage(SaveFileDialog dlg, Image img)
+        {
+            // Create a MemoryStream that will be minimally scoped
+            using (MemoryStream memStream = new MemoryStream())
+            {
+                // Save the image to the memorystream in it's native format
+                img.Save(memStream, originalImgFormat);
+
+                // Creating an Image that can actually be saved - Should probably make everything up to this point a method
+                // Should also incorporate some kind of using statement to close off the MemoryStream
+                Image imgToSave = Image.FromStream(memStream);
+
+                // FilterIndex appears to record which filetype is selected
+                switch (dlg.FilterIndex)
+                {
+                    case 1:
+                        imgToSave.Save(dlg.FileName, ImageFormat.Jpeg);
+                        break;
+                    case 2:
+                        imgToSave.Save(dlg.FileName, ImageFormat.Bmp);
+                        break;
+                    case 3:
+                        imgToSave.Save(dlg.FileName, ImageFormat.Png);
+                        break;
+                    case 4:
+                        imgToSave.Save(dlg.FileName, ImageFormat.Tiff);
+                        break;
+                }
+            } dlg.Dispose();
         }
 
         private void MenuClearImage_Click(object sender, EventArgs e)
@@ -169,11 +170,10 @@ namespace WfaPictureViewer
             // Clears any image that might be in the pictureBox, and if there isn't any being displayed, opens a messagebox
             if (pictureBox1.Image != null)
             {
-                pictureBox1.Image = null;
+                pictureBox1.Image = currentImg = null;
                 pictureBox1.Tag = null;
                 UpdateText();
-                imgIsLoaded = false;
-                originalImage = null;
+                originalImg = null;
                 UpdateImgOptions();
             }
             else
@@ -238,7 +238,7 @@ namespace WfaPictureViewer
                 {
                     // This method allows the data to be accessed without being public
                     amount =  dlgBright.getAmount();
-                    pictureBox1.Image = ApplyTransparency(pictureBox1.Image, amount);
+                    pictureBox1.Image = currentImg = ApplyTransparency(currentImg, amount);
                 }
                 else if(dlgResult == DialogResult.Cancel)
                 {
@@ -257,7 +257,7 @@ namespace WfaPictureViewer
         {
             if (pictureBox1.Image != null)
             {
-                pictureBox1.Image = ApplyGrayscale(pictureBox1.Image);
+                pictureBox1.Image = currentImg = ApplyGrayscale(currentImg);
             }
         }
 
@@ -265,10 +265,35 @@ namespace WfaPictureViewer
         {
             if (pictureBox1.Image != null)
             {
-                pictureBox1.Image = ApplySepia(pictureBox1.Image);
+                pictureBox1.Image = currentImg = ApplySepia(currentImg);
             }
-
         }        
+
+        private void menuExportChannels_Click(object sender, EventArgs e)
+        {
+            using (Channels dlgChannels = new Channels()) 
+            {
+                if (dlgChannels.ShowDialog() == DialogResult.OK)
+                {
+                    if (dlgChannels.colourChannel != "All")
+                    {
+                        ExportChannel(dlgChannels.colourChannel, currentImg);
+                    }
+                    else if (dlgChannels.colourChannel == "All")
+                    {
+                        // Runs the method once for each channel
+                        ExportChannel("R", currentImg);
+                        ExportChannel("G", currentImg);
+                        ExportChannel("B", currentImg);
+                        ExportChannel("A", currentImg);
+                    }
+                    else
+                    {
+                        MessageBox.Show("An error occurred when registering choice of colour channel.");
+                    }
+                }
+            }
+        }
 
         private void menuTest_Click(object sender, EventArgs e)
         {
@@ -286,6 +311,14 @@ namespace WfaPictureViewer
                 Console.WriteLine("Cancelled");
             }
             dlgTest.Dispose();
+        }
+
+        private void menuResetAdjustments_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image != null)
+            {
+                UpdatePicBox(originalImg);
+            }
         }
 
         private void MenuKanyeQuest_Click(object sender, EventArgs e)
@@ -517,7 +550,7 @@ namespace WfaPictureViewer
         private void UpdateImgOptions()
         {
             // Enable if image is currently loaded
-            if (imgIsLoaded)
+            if (pictureBox1.Image != null)
             {
                 menuClearImage.Enabled = true;
                 menuCopyImage.Enabled = true;
@@ -525,6 +558,8 @@ namespace WfaPictureViewer
                 menuGrayscale.Enabled = true;
                 menuSepia.Enabled = true;
                 menuSaveImage.Enabled = true;
+                menuExportChannels.Enabled = true;
+                menuResetAdjustments.Enabled = true;
 
                 // Activate or deactivate stretching-specific menu items depending on whether stretching is enabled
                 if (chkStretch.Checked == true)
@@ -548,7 +583,9 @@ namespace WfaPictureViewer
                 menuTransparency.Enabled = false;
                 menuGrayscale.Enabled = false;
                 menuSepia.Enabled = false;
-                menuSaveImage.Enabled = false;   
+                menuSaveImage.Enabled = false;
+                menuExportChannels.Enabled = false;
+                menuResetAdjustments.Enabled = false;
             }
         }
 
@@ -571,14 +608,14 @@ namespace WfaPictureViewer
         }
 
         // Apply transparency to the supplied image, defaulting the value to 100
-        public Bitmap ApplyTransparency(Image sourceImg, byte newAlphaAmount = 100)
+        public Bitmap ApplyTransparency(Bitmap sourceImg, byte newAlphaAmount = 100)
         {
-            // Getting a correctly formatted image from GetArgbVer, This might not be necessary depending on how the picturebox stores the image, will check afterwards. 
-            Bitmap updatedImg = GetArgbVer(sourceImg);
+            /*// Getting a correctly formatted image from GetArgbVer, This might not be necessary depending on how the picturebox stores the image, will check afterwards. 
+            Bitmap updatedImg = GetArgbVer(sourceImg);*/
 
             // Using BitmapData, the Lockbits method can be used to extract the image's pixel pixelData
             // Lockbits 'locks' a bitmap in to memory
-            BitmapData pixelData = updatedImg.LockBits(new Rectangle(0, 0, sourceImg.Width, sourceImg.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData pixelData = sourceImg.LockBits(new Rectangle(0, 0, sourceImg.Width, sourceImg.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
            
             // From here on, whenever the pointer is changed, it is changing the data stored at the pointer address
 
@@ -603,21 +640,22 @@ namespace WfaPictureViewer
             // The data does not have to be passed to pixelData, because the pointer address was pointing to the data all along.
 
             // The new edited pixels are passed back to the image
-            updatedImg.UnlockBits(pixelData);
+            sourceImg.UnlockBits(pixelData);
 
             pixelByteArray = null;
             pixelData = null;
 
-            return updatedImg;
+            return sourceImg;
         }
 
         // Convert the image to Grayscale
-        public Bitmap ApplyGrayscale(Image sourceImg)
+        public Bitmap ApplyGrayscale(Bitmap sourceImg)
         {
-            // Get a usable Bitmpa from the source image
-            Bitmap updatedImg = GetArgbVer(sourceImg);
+            /*// Get a usable Bitmpa from the source image
+            Bitmap updatedImg = GetArgbVer(sourceImg);*/
+
             // Get the bit data from the image and draw it in to imgData
-            BitmapData imgData = updatedImg.LockBits(new Rectangle(0, 0, sourceImg.Width, sourceImg.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData imgData = sourceImg.LockBits(new Rectangle(0, 0, sourceImg.Width, sourceImg.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
             // A pointer is directed to the address of the first piece of data, this is now an int that holds the ARGB data of a given pixel (I think). A printf returns an int
             IntPtr dataPointer = imgData.Scan0;
@@ -669,21 +707,21 @@ namespace WfaPictureViewer
             // Copy the data back to the pointer
             Marshal.Copy(pixelByteBuffer, 0, dataPointer, pixelByteBuffer.Length);
             
-            updatedImg.UnlockBits(imgData);
+            sourceImg.UnlockBits(imgData);
 
             pixelByteBuffer = null;
             imgData = null;
 
-            return updatedImg;
+            return sourceImg;
         }
 
-        public Bitmap ApplySepia(Image sourceImg)
+        public Bitmap ApplySepia(Bitmap sourceImg)
         {
-            // Get a Bitmap formatted version of the source image
-            Bitmap convertedImg = GetArgbVer(sourceImg);
+            /*// Get a Bitmap formatted version of the source image
+            Bitmap convertedImg = GetArgbVer(sourceImg);*/
 
             // Lock the pixel data from the source image into imgData, a BitmapData Type container. 
-            BitmapData imgData = convertedImg.LockBits(new Rectangle(0, 0, sourceImg.Width, sourceImg.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData imgData = sourceImg.LockBits(new Rectangle(0, 0, sourceImg.Width, sourceImg.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
             IntPtr dataPointer = imgData.Scan0; 
 
@@ -732,12 +770,87 @@ namespace WfaPictureViewer
             Marshal.Copy(imgBuffer, 0, dataPointer, imgBuffer.Length);
 
             // give to bitmap type image for return
-            convertedImg.UnlockBits(imgData);
+            sourceImg.UnlockBits(imgData);
 
             imgBuffer = null;
             imgData = null;
 
-            return convertedImg;
+            return sourceImg;
+        }
+
+        public void ExportChannel(string channel, Bitmap img)
+        {
+            // Importantly, a completely new Bitmap has to be created from the passed image, to avoid the pointer (I think) editing things like currentImg
+            Bitmap channelImg = new Bitmap(img);
+            BitmapData imgData = channelImg.LockBits(new Rectangle(0, 0, channelImg.Width, channelImg.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            IntPtr dataPointer = imgData.Scan0;
+
+            byte[] imgBuffer = new byte [imgData.Stride * imgData.Height];
+
+            Marshal.Copy(dataPointer, imgBuffer, 0, imgBuffer.Length);
+
+            // An array to hold the offset ints for the channels that will be changed. 
+            // B = 0 G = 1 R = 2 A = 3
+            int[] bytesToChange = new int[3];
+
+            switch (channel)
+            {
+                case "R":
+                    bytesToChange[0] = 0;
+                    bytesToChange[1] = 1;
+                    bytesToChange[2] = 1; // Duped to avoid editing the alpha
+                    break;
+                case "G":
+                    bytesToChange[0] = 0;
+                    bytesToChange[1] = 2;
+                    bytesToChange[2] = 2; // Duped to avoid editing the alpha
+                    break;
+                case "B":
+                    bytesToChange[0] = 1;
+                    bytesToChange[1] = 2;
+                    bytesToChange[2] = 2; // Duped to avoid editing the alpha
+                    break;
+                case "A":
+                    bytesToChange[0] = 0;
+                    bytesToChange[1] = 1;
+                    bytesToChange[2] = 2;
+                    break;
+            }
+
+            for (int i = 0; i < imgBuffer.Length; i += 4)
+            {
+                imgBuffer[i + bytesToChange[0]] = 0;
+                imgBuffer[i + bytesToChange[1]] = 0;
+                imgBuffer[i + bytesToChange[2]] = 0;
+            }
+
+            Marshal.Copy(imgBuffer, 0, dataPointer, imgBuffer.Length);
+
+            channelImg.UnlockBits(imgData);
+
+            
+
+            // Creating an instance of the dialog to hold 
+            using (SaveFileDialog dlgSaveChannel = new SaveFileDialog())
+            {
+                dlgSaveChannel.FileName = (Path.GetFileNameWithoutExtension(pictureBox1.Tag.ToString()) + "_" + channel);
+                dlgSaveChannel.InitialDirectory = "C:/Desktop";
+                dlgSaveChannel.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
+                dlgSaveChannel.Title = "Save (" + channel + ") Image Channel";
+
+                if (dlgSaveChannel.ShowDialog() == DialogResult.OK)
+                {
+                    SaveImage(dlgSaveChannel, channelImg);
+                }
+                else
+                {
+                    // Saving failed
+                }
+            }
+
+            imgBuffer = null;
+            imgData = null;
         }
 
         public void TestFunction(int x)
@@ -751,5 +864,6 @@ namespace WfaPictureViewer
         {
             
         }
+
     }
 }

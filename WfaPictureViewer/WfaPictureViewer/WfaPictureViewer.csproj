@@ -50,6 +50,12 @@
     <Compile Include="Brightness.Designer.cs">
       <DependentUpon>Brightness.cs</DependentUpon>
     </Compile>
+    <Compile Include="Channels.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Channels.Designer.cs">
+      <DependentUpon>Channels.cs</DependentUpon>
+    </Compile>
     <Compile Include="Grayscale.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -79,6 +85,9 @@
     </Compile>
     <EmbeddedResource Include="Brightness.resx">
       <DependentUpon>Brightness.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Channels.resx">
+      <DependentUpon>Channels.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
