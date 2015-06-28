@@ -64,6 +64,7 @@
             this.menuResetBGColour = new System.Windows.Forms.ToolStripMenuItem();
             this.menuDisplayBGInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.saveImageDialog = new System.Windows.Forms.SaveFileDialog();
+            this.menuAddAnother = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.flowLayoutPanel2.SuspendLayout();
@@ -171,8 +172,8 @@
             // openPictureDialog
             // 
             this.openPictureDialog.FileName = "openFileDialog1";
-            this.openPictureDialog.Filter = "JPEG Files (*.jpg)|*.jpg|PNG Filez (*.png)|*.png|BMP Files (*.bmp)|(*.bmp)|All fi" +
-    "les (*.*)|*.*";
+            this.openPictureDialog.Filter = "All files (*.*)|*.*|JPEG Files (*.jpg)|*.jpg|PNG Filez (*.png)|*.png|BMP Files (*" +
+    ".bmp)|(*.bmp)";
             this.openPictureDialog.Title = "Select a picture file";
             // 
             // menuStrip1
@@ -191,6 +192,7 @@
             // 
             this.menuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuLoadImage,
+            this.menuAddAnother,
             this.menuClearImage,
             this.menuCopyImage,
             this.menuSaveImage,
@@ -203,40 +205,40 @@
             // menuLoadImage
             // 
             this.menuLoadImage.Name = "menuLoadImage";
-            this.menuLoadImage.Size = new System.Drawing.Size(137, 22);
+            this.menuLoadImage.Size = new System.Drawing.Size(178, 22);
             this.menuLoadImage.Text = "Load Image";
             this.menuLoadImage.Click += new System.EventHandler(this.MenuLoadImage_Click);
             // 
             // menuClearImage
             // 
             this.menuClearImage.Name = "menuClearImage";
-            this.menuClearImage.Size = new System.Drawing.Size(137, 22);
+            this.menuClearImage.Size = new System.Drawing.Size(178, 22);
             this.menuClearImage.Text = "Clear Image";
             this.menuClearImage.Click += new System.EventHandler(this.MenuClearImage_Click);
             // 
             // menuCopyImage
             // 
             this.menuCopyImage.Name = "menuCopyImage";
-            this.menuCopyImage.Size = new System.Drawing.Size(137, 22);
+            this.menuCopyImage.Size = new System.Drawing.Size(178, 22);
             this.menuCopyImage.Text = "Copy";
             this.menuCopyImage.Click += new System.EventHandler(this.MenuCopyImage_Click);
             // 
             // menuSaveImage
             // 
             this.menuSaveImage.Name = "menuSaveImage";
-            this.menuSaveImage.Size = new System.Drawing.Size(137, 22);
+            this.menuSaveImage.Size = new System.Drawing.Size(178, 22);
             this.menuSaveImage.Text = "Save ";
             this.menuSaveImage.Click += new System.EventHandler(this.MenuSaveImage_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(134, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(175, 6);
             // 
             // menuClose
             // 
             this.menuClose.Name = "menuClose";
-            this.menuClose.Size = new System.Drawing.Size(137, 22);
+            this.menuClose.Size = new System.Drawing.Size(178, 22);
             this.menuClose.Text = "Close";
             this.menuClose.Click += new System.EventHandler(this.menuClose_Click);
             // 
@@ -368,6 +370,13 @@
             this.menuDisplayBGInfo.Text = "Display BG Colour Info";
             this.menuDisplayBGInfo.Click += new System.EventHandler(this.MenuDisplayBGInfo_Click);
             // 
+            // menuAddAnother
+            // 
+            this.menuAddAnother.Name = "menuAddAnother";
+            this.menuAddAnother.Size = new System.Drawing.Size(178, 22);
+            this.menuAddAnother.Text = "Add Another Image";
+            this.menuAddAnother.Click += new System.EventHandler(this.menuAddAnother_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -431,6 +440,7 @@
         private System.Windows.Forms.ToolStripMenuItem menuResetAdjustments;
         private System.Windows.Forms.ToolStripMenuItem menuExportChannels;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem menuAddAnother;
     }
 }
 

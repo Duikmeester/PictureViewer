@@ -12,6 +12,8 @@ namespace WfaPictureViewer
 {
     public partial class Channels : Form
     {
+        bool alphaBW;
+
         public string colourChannel;
 
         public Channels()
@@ -36,12 +38,38 @@ namespace WfaPictureViewer
 
         private void btnA_Click(object sender, EventArgs e)
         {
-            colourChannel = "A";
+            if (alphaBW == false)
+            {
+                colourChannel = "A";
+            }
+            else
+            {
+                colourChannel = "ABW";
+            }
         }
 
         private void btnAll_Click(object sender, EventArgs e)
         {
-            colourChannel = "All";
+            if (alphaBW == false)
+            {
+                colourChannel = "All";
+            }
+            else if (alphaBW == true)
+            {
+                colourChannel = "AllBW";
+            }
+        }
+
+        private void chkAlphaBW_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkAlphaBW.Checked == true)
+            {
+                alphaBW = true;
+            }
+            else if (chkAlphaBW.Checked == false)
+            {
+                alphaBW = false;
+            }
         }
     }
 }

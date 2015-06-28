@@ -26,6 +26,9 @@ namespace WfaPictureViewer
         Bitmap originalImg; // The image when loaded, ARGB
         Bitmap currentImg; // The image being displayed, ARGB
         ImageFormat originalImgFormat;
+        bool multipleImgLoaded;
+        List<Bitmap> loadedImgs;
+        int currentImgListIndex;
 
         /* 
          * HERE, THE VARIABLES ARE INITIALISED, ALONG WITH THE FORM ITSELF, AND SOME OTHER STUFFS
@@ -50,17 +53,9 @@ namespace WfaPictureViewer
             UpdateImgOptions();
             UpdateText();
 
+            loadedImgs = new List<Bitmap>();
             //menuBrightnessContrast.Enabled = false;
             menuKanyeQuest.Enabled = false;
-
-            // In C#, the square brackets go after the type declaration, not the name
-            //int[] curSize = {1,1};
-            /*// Displaying each line of text in the input file in the Output console
-            len = inputFileText.Length;
-            for (int i = 0; i < len; i++)
-            {
-                System.Diagnostics.Debug.WriteLine("Line number " + i + " in the array is: " + inputFileText[i]);
-            }*/
 
         }
 
@@ -74,7 +69,8 @@ namespace WfaPictureViewer
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {                                                         
+        {
+
         }
 
         /*
@@ -91,17 +87,45 @@ namespace WfaPictureViewer
                 // Passing the new image's name to the PictureBox1 Tag field
                 pictureBox1.Tag = openPictureDialog.SafeFileName;
                 originalImg = loadedImg;
-                UpdatePicBox(originalImg);
-                //       format to avoid unnessecary conversion later 
+                // GetArgbVer of the image, and pass it to UpdatePicBox
+                UpdatePicBox(GetArgbVer(originalImg));
+                // Format to avoid unnessecary conversion later 
                 originalImgFormat = originalImg.RawFormat;
             }
+        }
+
+        private void menuAddAnother_Click(object sender, EventArgs e)
+        {
+            /*// only opens if the V user clicks OK
+            if (openPictureDialog.ShowDialog() == DialogResult.OK)
+            {   //First, load the image in to a bitmap, using the filename from the dialog
+                Bitmap loadedImg = new Bitmap(openPictureDialog.FileName);
+                // Passing the new image's name to the PictureBox1 Tag field
+                pictureBox1.Tag = openPictureDialog.SafeFileName;
+                originalImg = loadedImg;
+                // GetArgbVer of the image, and pass it to UpdatePicBox
+                UpdatePicBox(GetArgbVer(originalImg));
+                //       format to avoid unnessecary conversion later 
+                originalImgFormat = originalImg.RawFormat;
+            }*/
+        }
+
+        private void ListManagerAdd()
+        {
+
+        }
+
+        private void removeCurrentImg()
+        {
+            loadedImgs[currentImgListIndex] = null;
+            StepThroughImgList(1);
         }
 
         // Update the picbox with a passed image, ususally straight from the Load event ^
         private void UpdatePicBox(Bitmap img)
         {
-            // Assign an ARGB version of originalImg to current and picbox
-            pictureBox1.Image = currentImg = GetArgbVer(img);
+            // Assign passed img to current and picbox
+            pictureBox1.Image = currentImg = img;
 
             curCorrectRatio = (float)pictureBox1.Image.Width / (float)pictureBox1.Image.Height;
             UpdateImgOptions();
@@ -114,6 +138,14 @@ namespace WfaPictureViewer
             {
                 menuFitWindow.PerformClick();
             }
+        }
+
+        public void StepThroughImgList (int numSteps)
+        {
+            // if (there's something to move to)
+            // change currentimage and picurebox image
+            // currentlistindex + numSteps
+
         }
 
         private void MenuSaveImage_Click(object sender, EventArgs e)
@@ -275,7 +307,7 @@ namespace WfaPictureViewer
             {
                 if (dlgChannels.ShowDialog() == DialogResult.OK)
                 {
-                    if (dlgChannels.colourChannel != "All")
+                    if (dlgChannels.colourChannel == "R" || dlgChannels.colourChannel == "G" || dlgChannels.colourChannel == "B" || dlgChannels.colourChannel == "A")
                     {
                         ExportChannel(dlgChannels.colourChannel, currentImg);
                     }
@@ -286,6 +318,13 @@ namespace WfaPictureViewer
                         ExportChannel("G", currentImg);
                         ExportChannel("B", currentImg);
                         ExportChannel("A", currentImg);
+                    }
+                    else if (dlgChannels.colourChannel == "AllBW")
+                    {
+                        ExportChannel("R", currentImg);
+                        ExportChannel("G", currentImg);
+                        ExportChannel("B", currentImg);
+                        ExportChannel("ABW", currentImg);
                     }
                     else
                     {
@@ -560,6 +599,7 @@ namespace WfaPictureViewer
                 menuSaveImage.Enabled = true;
                 menuExportChannels.Enabled = true;
                 menuResetAdjustments.Enabled = true;
+                menuAddAnother.Enabled = true;
 
                 // Activate or deactivate stretching-specific menu items depending on whether stretching is enabled
                 if (chkStretch.Checked == true)
@@ -586,6 +626,7 @@ namespace WfaPictureViewer
                 menuSaveImage.Enabled = false;
                 menuExportChannels.Enabled = false;
                 menuResetAdjustments.Enabled = false;
+                menuAddAnother.Enabled = false;
             }
         }
 
@@ -793,6 +834,7 @@ namespace WfaPictureViewer
             // An array to hold the offset ints for the channels that will be changed. 
             // B = 0 G = 1 R = 2 A = 3
             int[] bytesToChange = new int[3];
+            byte value = 0;
 
             switch (channel)
             {
@@ -800,29 +842,45 @@ namespace WfaPictureViewer
                     bytesToChange[0] = 0;
                     bytesToChange[1] = 1;
                     bytesToChange[2] = 1; // Duped to avoid editing the alpha
+                    value = 0;
                     break;
                 case "G":
                     bytesToChange[0] = 0;
                     bytesToChange[1] = 2;
                     bytesToChange[2] = 2; // Duped to avoid editing the alpha
+                    value = 0;
                     break;
                 case "B":
                     bytesToChange[0] = 1;
                     bytesToChange[1] = 2;
                     bytesToChange[2] = 2; // Duped to avoid editing the alpha
+                    value = 0;
                     break;
                 case "A":
                     bytesToChange[0] = 0;
                     bytesToChange[1] = 1;
                     bytesToChange[2] = 2;
+                    value = 255;
+                    break;
+                case "ABW":
+                    bytesToChange[0] = 0;
+                    bytesToChange[1] = 1;
+                    bytesToChange[2] = 2;
+                    value = 255;
                     break;
             }
 
             for (int i = 0; i < imgBuffer.Length; i += 4)
             {
-                imgBuffer[i + bytesToChange[0]] = 0;
-                imgBuffer[i + bytesToChange[1]] = 0;
-                imgBuffer[i + bytesToChange[2]] = 0;
+                // If we're exporting the B/W alpha image
+                if (channel == "ABW")
+                {
+                    // The new value for R, G & B is equal to the alpha channel
+                    value = imgBuffer[i + 3];
+                }
+                imgBuffer[i + bytesToChange[0]] = value;
+                imgBuffer[i + bytesToChange[1]] = value;
+                imgBuffer[i + bytesToChange[2]] = value;
             }
 
             Marshal.Copy(imgBuffer, 0, dataPointer, imgBuffer.Length);
@@ -834,10 +892,23 @@ namespace WfaPictureViewer
             // Creating an instance of the dialog to hold 
             using (SaveFileDialog dlgSaveChannel = new SaveFileDialog())
             {
+                // Converging the alphas for the puspose of savedialog creation
+                if (channel == "ABW")
+                    channel = "A";
+
                 dlgSaveChannel.FileName = (Path.GetFileNameWithoutExtension(pictureBox1.Tag.ToString()) + "_" + channel);
                 dlgSaveChannel.InitialDirectory = "C:/Desktop";
-                dlgSaveChannel.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
                 dlgSaveChannel.Title = "Save (" + channel + ") Image Channel";
+
+                if (channel == "A")
+                {
+                    dlgSaveChannel.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
+                }
+                else
+                {
+                    dlgSaveChannel.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
+                }
+
 
                 if (dlgSaveChannel.ShowDialog() == DialogResult.OK)
                 {
@@ -848,7 +919,7 @@ namespace WfaPictureViewer
                     // Saving failed
                 }
             }
-
+            channel = null;
             imgBuffer = null;
             imgData = null;
         }
@@ -864,6 +935,5 @@ namespace WfaPictureViewer
         {
             
         }
-
     }
 }
