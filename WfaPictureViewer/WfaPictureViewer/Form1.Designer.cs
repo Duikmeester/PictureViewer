@@ -41,6 +41,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.menuLoadImage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuAddAnother = new System.Windows.Forms.ToolStripMenuItem();
             this.menuClearImage = new System.Windows.Forms.ToolStripMenuItem();
             this.menuCopyImage = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSaveImage = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,7 +65,6 @@
             this.menuResetBGColour = new System.Windows.Forms.ToolStripMenuItem();
             this.menuDisplayBGInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.saveImageDialog = new System.Windows.Forms.SaveFileDialog();
-            this.menuAddAnother = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.flowLayoutPanel2.SuspendLayout();
@@ -208,6 +208,13 @@
             this.menuLoadImage.Size = new System.Drawing.Size(178, 22);
             this.menuLoadImage.Text = "Load Image";
             this.menuLoadImage.Click += new System.EventHandler(this.MenuLoadImage_Click);
+            // 
+            // menuAddAnother
+            // 
+            this.menuAddAnother.Name = "menuAddAnother";
+            this.menuAddAnother.Size = new System.Drawing.Size(178, 22);
+            this.menuAddAnother.Text = "Add Another Image";
+            this.menuAddAnother.Click += new System.EventHandler(this.menuAddAnother_Click);
             // 
             // menuClearImage
             // 
@@ -369,13 +376,6 @@
             this.menuDisplayBGInfo.Size = new System.Drawing.Size(193, 22);
             this.menuDisplayBGInfo.Text = "Display BG Colour Info";
             this.menuDisplayBGInfo.Click += new System.EventHandler(this.MenuDisplayBGInfo_Click);
-            // 
-            // menuAddAnother
-            // 
-            this.menuAddAnother.Name = "menuAddAnother";
-            this.menuAddAnother.Size = new System.Drawing.Size(178, 22);
-            this.menuAddAnother.Text = "Add Another Image";
-            this.menuAddAnother.Click += new System.EventHandler(this.menuAddAnother_Click);
             // 
             // Form1
             // 

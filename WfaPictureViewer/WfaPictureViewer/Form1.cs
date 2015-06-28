@@ -23,11 +23,11 @@ namespace WfaPictureViewer
         float curCorrectRatio;
         float picBoxRatio;
         Color defaultBG;
-        Bitmap originalImg; // The image when loaded, ARGB
+        Bitmap currnetOriginalImg; // The image when loaded, ARGB
         Bitmap currentImg; // The image being displayed, ARGB
-        ImageFormat originalImgFormat;
+        ImageFormat currentOriginalFormat;
         bool multipleImgLoaded;
-        List<Bitmap> loadedImgs;
+        List<LoadedImage> listLoadedImg;
         int currentImgListIndex;
 
         /* 
@@ -40,12 +40,13 @@ namespace WfaPictureViewer
 
             // Allow the form to process key inputs
             this.KeyPreview = true; 
-            this.KeyPress += new KeyPressEventHandler(Form1_KeyPressReg);
+            this.KeyPress += new KeyPressEventHandler(Form1_KeyPress);
 
             // "Size" is a struct, so you can't simply declare this.MinimumSize.Size = x,y
             this.MinimumSize = new Size(200, 100);
             // Bool initialisors
             chkAspectLock.Enabled = false;
+            multipleImgLoaded = false;
             // BG Colour stuff
             defaultBG = BackColor;
             menuResetBGColour.Enabled = false;
@@ -53,20 +54,24 @@ namespace WfaPictureViewer
             UpdateImgOptions();
             UpdateText();
 
-            loadedImgs = new List<Bitmap>();
-            //menuBrightnessContrast.Enabled = false;
-            menuKanyeQuest.Enabled = false;
-
+            listLoadedImg = new List<LoadedImage>();
+            //listLoadedImg = null;
         }
 
-        void Form1_KeyPressReg(object sender, KeyPressEventArgs key)
+        void Form1_KeyPress(object sender, KeyPressEventArgs key)
         {
             //MessageBox.Show(key.KeyChar.ToString());
             if (key.KeyChar.ToString() == "f")
             {
                 CycleMaximised();
             }
+            if (key.KeyChar.ToString() == "x")
+                StepThroughImgList(1);
+            if (key.KeyChar.ToString() == "z")
+                StepThroughImgList(-1);
         }
+
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -84,44 +89,56 @@ namespace WfaPictureViewer
             if (openPictureDialog.ShowDialog() == DialogResult.OK)
             {   //First, load the image in to a bitmap, using the filename from the dialog
                 Bitmap loadedImg = new Bitmap(openPictureDialog.FileName);
-                // Passing the new image's name to the PictureBox1 Tag field
-                pictureBox1.Tag = openPictureDialog.SafeFileName;
-                originalImg = loadedImg;
-                // GetArgbVer of the image, and pass it to UpdatePicBox
-                UpdatePicBox(GetArgbVer(originalImg));
-                // Format to avoid unnessecary conversion later 
-                originalImgFormat = originalImg.RawFormat;
+
+                // Creating a LoadedImage object with key information
+                LoadedImage img = new LoadedImage();
+                img.originalVer = img.currentVer = GetArgbVer(loadedImg);
+                img.name = openPictureDialog.SafeFileName;
+                img.originalFormat = loadedImg.RawFormat;
+
+                // Adding the new object to the list
+                listLoadedImg.Add(img);
+
+                currentImgListIndex = 0;
+                UpdatePicBox(listLoadedImg[currentImgListIndex]);
             }
+
         }
 
         private void menuAddAnother_Click(object sender, EventArgs e)
         {
-            /*// only opens if the V user clicks OK
-            if (openPictureDialog.ShowDialog() == DialogResult.OK)
-            {   //First, load the image in to a bitmap, using the filename from the dialog
+            if (listLoadedImg.Count > 0 && openPictureDialog.ShowDialog() == DialogResult.OK)
+            {
+                //First, load the image in to a bitmap, using the filename from the dialog
                 Bitmap loadedImg = new Bitmap(openPictureDialog.FileName);
-                // Passing the new image's name to the PictureBox1 Tag field
-                pictureBox1.Tag = openPictureDialog.SafeFileName;
-                originalImg = loadedImg;
-                // GetArgbVer of the image, and pass it to UpdatePicBox
-                UpdatePicBox(GetArgbVer(originalImg));
-                //       format to avoid unnessecary conversion later 
-                originalImgFormat = originalImg.RawFormat;
-            }*/
+
+                LoadedImage img = new LoadedImage();
+                img.originalVer = img.currentVer = GetArgbVer(loadedImg);
+                img.name = openPictureDialog.SafeFileName;
+                img.originalFormat = loadedImg.RawFormat;
+
+                // If you're at the end of the list, append the image, or else insert it at current position
+                if (currentImgListIndex == listLoadedImg.Count - 1)
+                    listLoadedImg.Add(img);
+                else if (currentImgListIndex < listLoadedImg.Count)
+                    listLoadedImg.Insert(currentImgListIndex + 1, img);
+
+                UpdateText();
+            }
         }
 
-        private void ListManagerAdd()
+        private void OpenImgFromList()
         {
-
+            
         }
 
         private void removeCurrentImg()
         {
-            loadedImgs[currentImgListIndex] = null;
+            listLoadedImg[currentImgListIndex] = null;
             StepThroughImgList(1);
         }
 
-        // Update the picbox with a passed image, ususally straight from the Load event ^
+        /*// Update the picbox with a passed image, ususally straight from the Load event ^
         private void UpdatePicBox(Bitmap img)
         {
             // Assign passed img to current and picbox
@@ -138,13 +155,42 @@ namespace WfaPictureViewer
             {
                 menuFitWindow.PerformClick();
             }
+        }*/
+
+        // Update the picbox with a passed image, ususally straight from the Load event ^
+        private void UpdatePicBox(LoadedImage img)
+        {
+            // Assign passed img to current and picbox
+            pictureBox1.Image = currentImg = img.currentVer;
+            // Passing the new image's name to the PictureBox1 Tag field
+            pictureBox1.Tag = img.name;
+            currnetOriginalImg = img.originalVer;
+            currentOriginalFormat = img.originalFormat;
+
+            curCorrectRatio = (float)pictureBox1.Image.Width / (float)pictureBox1.Image.Height;
+
+            if (listLoadedImg.Count > 1)
+                multipleImgLoaded = true;
+            else
+                multipleImgLoaded = false;
+
+            // Updating the display info
+            UpdatePicboxInfo();
+            UpdateText();
+            UpdateImgOptions();
+
+            if (chkAutoscaleLoad.Checked)
+                menuFitWindow.PerformClick();
         }
 
         public void StepThroughImgList (int numSteps)
         {
-            // if (there's something to move to)
-            // change currentimage and picurebox image
-            // currentlistindex + numSteps
+            // If the desired destination is not null
+            if ((currentImgListIndex + numSteps) >= 0 && (currentImgListIndex + numSteps) <= (listLoadedImg.Count - 1))
+            {
+                currentImgListIndex += numSteps;
+                UpdatePicBox(listLoadedImg[currentImgListIndex]);
+            }
 
         }
 
@@ -172,7 +218,7 @@ namespace WfaPictureViewer
             using (MemoryStream memStream = new MemoryStream())
             {
                 // Save the image to the memorystream in it's native format
-                img.Save(memStream, originalImgFormat);
+                img.Save(memStream, currentOriginalFormat);
 
                 // Creating an Image that can actually be saved - Should probably make everything up to this point a method
                 // Should also incorporate some kind of using statement to close off the MemoryStream
@@ -202,11 +248,29 @@ namespace WfaPictureViewer
             // Clears any image that might be in the pictureBox, and if there isn't any being displayed, opens a messagebox
             if (pictureBox1.Image != null)
             {
-                pictureBox1.Image = currentImg = null;
-                pictureBox1.Tag = null;
-                UpdateText();
-                originalImg = null;
-                UpdateImgOptions();
+                // Removes the currently displayed item from the list
+                listLoadedImg.Remove(listLoadedImg[currentImgListIndex]);
+
+                if (listLoadedImg.Count == 0)
+                {
+                    // Updating needs to be done here, because UpdatePicBox wont be called
+                    pictureBox1.Image = currentImg = null;
+                    pictureBox1.Tag = null;
+                    currnetOriginalImg = null;
+                    currentImgListIndex = 0;
+                    UpdateText();
+                    UpdatePicboxInfo();
+                }
+                else
+                {
+                    // Adjust for the lost list item, this is only done if there is actually images loaded
+                    currentImgListIndex -= 1;
+                    // UpdatePicBox with the new list index
+                    UpdatePicBox(listLoadedImg[currentImgListIndex]);
+                    // And make sure this new correct value is actually being displayed
+                    UpdatePicboxInfo();
+                }
+
             }
             else
             {
@@ -356,7 +420,8 @@ namespace WfaPictureViewer
         {
             if (pictureBox1.Image != null)
             {
-                UpdatePicBox(originalImg);
+                //UpdatePicBox(currnetOriginalImg);
+                UpdatePicBox(listLoadedImg[0]);
             }
         }
 
@@ -444,36 +509,16 @@ namespace WfaPictureViewer
             return ms.ToArray();
         }
 
-        public byte[] getByteArray (Image imgIn)
-        {
-            // Getting a correctly formatted image from GetArgbVer, This might not be necessary depending on how the picturebox stores the image, will check afterwards. 
-            Bitmap updatedImg = GetArgbVer(imgIn);
-
-            // Using BitmapData, the Lockbits method can be used to extract the image's pixel pixelData
-            // Lockbits 'locks' a bitmap in to memory
-            BitmapData pixelData = updatedImg.LockBits(new Rectangle(0, 0, imgIn.Width, imgIn.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
-            // From here on, whenever the pointer is changed, it is changing the data stored at the pointer address
-
-            // A pointer directed at the location of the first pixel read by LockBits. I believe this accesses the B, G, R, A info, as opposed to the pixels themselves
-            IntPtr pixelDataPointer = pixelData.Scan0;
-
-            MessageBox.Show(pixelDataPointer.ToString());
-            // Here, an array of all the bytes that make up the pixles is created, The stride is the width of the array when also accounting for the extra buffering area.
-            byte[] pixelByteArray = new byte[pixelData.Stride * pixelData.Height];
-
-            Marshal.Copy(pixelDataPointer, pixelByteArray, 0, pixelByteArray.Length);
-
-            return pixelByteArray;
-            
-        }
-
         private void UpdatePicboxInfo()
         {
             if (pictureBox1.Image != null)
             {
                 // Writing the file info to the label
                 lblPicInfo.Text = ("File Name: " + pictureBox1.Tag + Environment.NewLine + "H: " + pictureBox1.Image.Height + Environment.NewLine + "W: " + pictureBox1.Image.Width + Environment.NewLine + "Aspect Ratio: " + GetPicBoxRatio() + Environment.NewLine + "Stretching: " + GetRatioDistortion());
+            }
+            else
+            {
+                lblPicInfo.Text = null;
             }
         }
 
@@ -482,13 +527,11 @@ namespace WfaPictureViewer
         {
             if (pictureBox1.Image != null)
             {
-                // Take the first line of the input text file
-                lblPicNotifier.Text = inputFileText[0];
+                lblPicNotifier.Text = "Image " + (currentImgListIndex + 1) + " of " + listLoadedImg.Count;
             }
             else
             {
-                // Take the second line of the input text file
-                lblPicNotifier.Text = inputFileText[1];
+                lblPicNotifier.Text = "Use 'File>Load Image' to get started.";
             }
         }
 
@@ -601,6 +644,12 @@ namespace WfaPictureViewer
                 menuResetAdjustments.Enabled = true;
                 menuAddAnother.Enabled = true;
 
+                // If there is more than one image loaded, only allow "add".
+                if (listLoadedImg.Count >= 1)
+                {
+                    menuLoadImage.Enabled = false;
+                }
+
                 // Activate or deactivate stretching-specific menu items depending on whether stretching is enabled
                 if (chkStretch.Checked == true)
                 {
@@ -612,6 +661,7 @@ namespace WfaPictureViewer
                     menuResetStretching.Enabled = false;
                     menuFitWindow.Enabled = true;
                 }
+
             }
             // Disable if image is not currently loaded
             else
@@ -628,6 +678,7 @@ namespace WfaPictureViewer
                 menuResetAdjustments.Enabled = false;
                 menuAddAnother.Enabled = false;
             }
+
         }
 
         // Converts an image into 32bit ARGB format for editing
@@ -935,5 +986,13 @@ namespace WfaPictureViewer
         {
             
         }
+    }
+
+    public class LoadedImage
+    {
+        public Bitmap originalVer { get; set; }
+        public Bitmap currentVer { get; set; }
+        public string name { get; set; }
+        public ImageFormat originalFormat { get; set; }
     }
 }
