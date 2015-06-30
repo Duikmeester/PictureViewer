@@ -373,12 +373,12 @@ namespace WfaPictureViewer
                 // The 'Luminosity' button is set to "OK".
                 if (dlgResult == DialogResult.OK)
                 {
-                    pictureBox1.Image = currentImg = ApplyGrayscale(currentImg, "luminosity");
+                    pictureBox1.Image = listLoadedImg[currentImgListIndex].currentVer = currentImg = ApplyGrayscale(currentImg, "luminosity");
                 }
                 // The 'Average' button is set to "Yes".
                 else if (dlgResult == DialogResult.Yes)
                 {
-                    pictureBox1.Image = currentImg = ApplyGrayscale(currentImg, "average");
+                    pictureBox1.Image = listLoadedImg[currentImgListIndex].currentVer = currentImg = ApplyGrayscale(currentImg, "average");
                 }
                 else
                 {
@@ -470,50 +470,6 @@ namespace WfaPictureViewer
             colourToTest = Color.Empty;
         }
 
-        /*private void menuBatchChannels_Click(object sender, EventArgs e)
-        {
-            using (Channels dlgChannels = new Channels())
-            {
-                if (dlgChannels.ShowDialog() == DialogResult.OK)
-                {
-                    // Saving the currentImage to be restored after batching
-                    LoadedImage tmpCurImg = listLoadedImg[currentImgListIndex];
-
-                    if (dlgChannels.colourChannel == "R" || dlgChannels.colourChannel == "G" || dlgChannels.colourChannel == "B" || dlgChannels.colourChannel == "A")
-                    {
-                        foreach (LoadedImage img in listLoadedImg)
-                        {
-                            // Load each image in turn
-                            UpdatePicBox(img);
-                            ExportChannel(dlgChannels.colourChannel, currentImg);
-                        }
-                    }
-                    else if (dlgChannels.colourChannel == "All")
-                    {
-                        // Execute channel exporting on each item in list
-                        foreach (LoadedImage img in listLoadedImg)
-                        {
-                            // Load each image in turn, and run the methods once for each channel
-                            UpdatePicBox(img);
-                            ExportChannel("R", currentImg);
-                            ExportChannel("G", currentImg);
-                            ExportChannel("B", currentImg);
-                            ExportChannel("A", currentImg);
-                            UpdatePicBox(tmpCurImg);
-                        }
-                    }
-                    else if (dlgChannels.colourChannel == "AllBW")
-                    {
-
-                    }
-                    else
-                    {
-                        MessageBox.Show("An error occurred when registering choice of colour channel.");
-                    }
-                }
-            }
-        }*/
-
         private void menuBatchChannels_Click(object sender, EventArgs e)
         {
             using (Channels dlgChannels = new Channels())
@@ -538,10 +494,22 @@ namespace WfaPictureViewer
         {
             using (Grayscale dlgGrayscale = new Grayscale())
             {
+                // "OK" is the result assigned to the luminosity button
                 if (dlgGrayscale.ShowDialog() == DialogResult.OK)
                 {
-
+                    foreach (LoadedImage img in listLoadedImg)
+                    {
+                        img.currentVer = ApplyGrayscale(img.currentVer, "luminosity");
+                    }
                 }
+                else if(dlgGrayscale.ShowDialog() == DialogResult.Yes)
+                {
+                    foreach (LoadedImage img in listLoadedImg)
+                    {
+                        
+                    }
+                }
+                UpdatePicBox(listLoadedImg[currentImgListIndex]);
             }
         }
 
@@ -944,9 +912,6 @@ namespace WfaPictureViewer
 
             pixelByteBuffer = null;
             imgData = null;
-
-            // Passing the new edited version of the iamge to the class object
-            listLoadedImg[currentImgListIndex].currentVer = sourceImg;
 
             return sourceImg;
         }
