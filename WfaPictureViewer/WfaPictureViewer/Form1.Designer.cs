@@ -30,12 +30,15 @@
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.lblPicNotifier = new System.Windows.Forms.Label();
             this.lblPicInfo = new System.Windows.Forms.Label();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.chkAutoscaleLoad = new System.Windows.Forms.CheckBox();
             this.chkStretch = new System.Windows.Forms.CheckBox();
             this.chkAspectLock = new System.Windows.Forms.CheckBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.btnNavigateRight = new System.Windows.Forms.Button();
+            this.lblPicNotifier = new System.Windows.Forms.Label();
+            this.btnNavigateLeft = new System.Windows.Forms.Button();
             this.openPictureDialog = new System.Windows.Forms.OpenFileDialog();
             this.colourDialog1 = new System.Windows.Forms.ColorDialog();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -48,26 +51,32 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuClose = new System.Windows.Forms.ToolStripMenuItem();
             this.menuImage = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuTransparency = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuGrayscale = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuSepia = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuResetAdjustments = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuRestImage = new System.Windows.Forms.ToolStripSeparator();
+            this.menuBatch = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuBatchChannels = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuBatchGrayscale = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuBatchTransparency = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuBatchSepia = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuBatchResetAdjustments = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.menuExportChannels = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuGrayscale = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuTransparency = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSepia = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuResetAdjustments = new System.Windows.Forms.ToolStripMenuItem();
             this.menuFitWindow = new System.Windows.Forms.ToolStripMenuItem();
             this.menuResetStretching = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuTest = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuKanyeQuest = new System.Windows.Forms.ToolStripMenuItem();
             this.menuWindow = new System.Windows.Forms.ToolStripMenuItem();
             this.menuChangeBG = new System.Windows.Forms.ToolStripMenuItem();
             this.menuResetBGColour = new System.Windows.Forms.ToolStripMenuItem();
             this.menuDisplayBGInfo = new System.Windows.Forms.ToolStripMenuItem();
+            this.forEachTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveImageDialog = new System.Windows.Forms.SaveFileDialog();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.flowLayoutPanel2.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,19 +87,21 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 125F));
             this.tableLayoutPanel1.Controls.Add(this.pictureBox1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.lblPicNotifier, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.lblPicInfo, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.lblPicInfo, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowCount = 5;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 65F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(591, 284);
             this.tableLayoutPanel1.TabIndex = 0;
+            this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
             // 
             // pictureBox1
             // 
@@ -99,27 +110,19 @@
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(3, 3);
             this.pictureBox1.Name = "pictureBox1";
-            this.tableLayoutPanel1.SetRowSpan(this.pictureBox1, 4);
+            this.tableLayoutPanel1.SetRowSpan(this.pictureBox1, 5);
             this.pictureBox1.Size = new System.Drawing.Size(460, 278);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            // 
-            // lblPicNotifier
-            // 
-            this.lblPicNotifier.AutoSize = true;
-            this.lblPicNotifier.Location = new System.Drawing.Point(469, 0);
-            this.lblPicNotifier.Name = "lblPicNotifier";
-            this.lblPicNotifier.Size = new System.Drawing.Size(35, 13);
-            this.lblPicNotifier.TabIndex = 5;
-            this.lblPicNotifier.Text = "label1";
             // 
             // lblPicInfo
             // 
             this.lblPicInfo.AutoSize = true;
             this.lblPicInfo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblPicInfo.Location = new System.Drawing.Point(469, 40);
+            this.lblPicInfo.Location = new System.Drawing.Point(469, 0);
             this.lblPicInfo.Name = "lblPicInfo";
-            this.lblPicInfo.Size = new System.Drawing.Size(119, 109);
+            this.tableLayoutPanel1.SetRowSpan(this.lblPicInfo, 2);
+            this.lblPicInfo.Size = new System.Drawing.Size(119, 149);
             this.lblPicInfo.TabIndex = 4;
             this.lblPicInfo.Text = " ";
             // 
@@ -130,10 +133,10 @@
             this.flowLayoutPanel2.Controls.Add(this.chkAspectLock);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.BottomUp;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(469, 152);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(469, 187);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.tableLayoutPanel1.SetRowSpan(this.flowLayoutPanel2, 2);
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(119, 129);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(119, 94);
             this.flowLayoutPanel2.TabIndex = 6;
             // 
             // chkAutoscaleLoad
@@ -141,7 +144,7 @@
             this.chkAutoscaleLoad.AutoSize = true;
             this.chkAutoscaleLoad.Checked = true;
             this.chkAutoscaleLoad.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutoscaleLoad.Location = new System.Drawing.Point(3, 109);
+            this.chkAutoscaleLoad.Location = new System.Drawing.Point(3, 74);
             this.chkAutoscaleLoad.Name = "chkAutoscaleLoad";
             this.chkAutoscaleLoad.Size = new System.Drawing.Size(117, 17);
             this.chkAutoscaleLoad.TabIndex = 0;
@@ -151,7 +154,7 @@
             // chkStretch
             // 
             this.chkStretch.AutoSize = true;
-            this.chkStretch.Location = new System.Drawing.Point(3, 86);
+            this.chkStretch.Location = new System.Drawing.Point(3, 51);
             this.chkStretch.Name = "chkStretch";
             this.chkStretch.Size = new System.Drawing.Size(60, 17);
             this.chkStretch.TabIndex = 1;
@@ -162,12 +165,51 @@
             // chkAspectLock
             // 
             this.chkAspectLock.AutoSize = true;
-            this.chkAspectLock.Location = new System.Drawing.Point(3, 63);
+            this.chkAspectLock.Location = new System.Drawing.Point(3, 28);
             this.chkAspectLock.Name = "chkAspectLock";
             this.chkAspectLock.Size = new System.Drawing.Size(114, 17);
             this.chkAspectLock.TabIndex = 2;
             this.chkAspectLock.Text = "Lock Aspect Ratio";
             this.chkAspectLock.UseVisualStyleBackColor = true;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.btnNavigateRight);
+            this.panel1.Controls.Add(this.lblPicNotifier);
+            this.panel1.Controls.Add(this.btnNavigateLeft);
+            this.panel1.Location = new System.Drawing.Point(469, 152);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(119, 29);
+            this.panel1.TabIndex = 7;
+            // 
+            // btnNavigateRight
+            // 
+            this.btnNavigateRight.Location = new System.Drawing.Point(86, 3);
+            this.btnNavigateRight.Name = "btnNavigateRight";
+            this.btnNavigateRight.Size = new System.Drawing.Size(30, 23);
+            this.btnNavigateRight.TabIndex = 1;
+            this.btnNavigateRight.Text = ">";
+            this.btnNavigateRight.UseVisualStyleBackColor = true;
+            this.btnNavigateRight.Click += new System.EventHandler(this.btnNavigateRight_Click);
+            // 
+            // lblPicNotifier
+            // 
+            this.lblPicNotifier.AutoSize = true;
+            this.lblPicNotifier.Location = new System.Drawing.Point(41, 8);
+            this.lblPicNotifier.Name = "lblPicNotifier";
+            this.lblPicNotifier.Size = new System.Drawing.Size(35, 13);
+            this.lblPicNotifier.TabIndex = 5;
+            this.lblPicNotifier.Text = "label1";
+            // 
+            // btnNavigateLeft
+            // 
+            this.btnNavigateLeft.Location = new System.Drawing.Point(4, 3);
+            this.btnNavigateLeft.Name = "btnNavigateLeft";
+            this.btnNavigateLeft.Size = new System.Drawing.Size(31, 23);
+            this.btnNavigateLeft.TabIndex = 0;
+            this.btnNavigateLeft.Text = "<";
+            this.btnNavigateLeft.UseVisualStyleBackColor = true;
+            this.btnNavigateLeft.Click += new System.EventHandler(this.btnNavigateLeft_Click);
             // 
             // openPictureDialog
             // 
@@ -181,7 +223,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuFile,
             this.menuImage,
-            this.menuWindow});
+            this.menuWindow,
+            this.forEachTestToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(591, 24);
@@ -252,28 +295,84 @@
             // menuImage
             // 
             this.menuImage.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuTransparency,
-            this.menuGrayscale,
-            this.menuSepia,
-            this.menuResetAdjustments,
-            this.menuRestImage,
+            this.menuBatch,
+            this.toolStripSeparator4,
             this.menuExportChannels,
+            this.menuGrayscale,
+            this.menuTransparency,
+            this.menuSepia,
             this.toolStripSeparator3,
+            this.menuResetAdjustments,
             this.menuFitWindow,
-            this.menuResetStretching,
-            this.toolStripSeparator2,
-            this.menuTest,
-            this.menuKanyeQuest});
+            this.menuResetStretching});
             this.menuImage.Name = "menuImage";
             this.menuImage.Size = new System.Drawing.Size(52, 20);
             this.menuImage.Text = "Image";
             // 
-            // menuTransparency
+            // menuBatch
             // 
-            this.menuTransparency.Name = "menuTransparency";
-            this.menuTransparency.Size = new System.Drawing.Size(208, 22);
-            this.menuTransparency.Text = "Transparency";
-            this.menuTransparency.Click += new System.EventHandler(this.MenuTransparency);
+            this.menuBatch.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuBatchChannels,
+            this.menuBatchGrayscale,
+            this.menuBatchTransparency,
+            this.menuBatchSepia,
+            this.toolStripSeparator5,
+            this.menuBatchResetAdjustments});
+            this.menuBatch.Name = "menuBatch";
+            this.menuBatch.Size = new System.Drawing.Size(208, 22);
+            this.menuBatch.Text = "Batch";
+            // 
+            // menuBatchChannels
+            // 
+            this.menuBatchChannels.Name = "menuBatchChannels";
+            this.menuBatchChannels.Size = new System.Drawing.Size(172, 22);
+            this.menuBatchChannels.Text = "Export Channels";
+            this.menuBatchChannels.Click += new System.EventHandler(this.menuBatchChannels_Click);
+            // 
+            // menuBatchGrayscale
+            // 
+            this.menuBatchGrayscale.Name = "menuBatchGrayscale";
+            this.menuBatchGrayscale.Size = new System.Drawing.Size(172, 22);
+            this.menuBatchGrayscale.Text = "Apply Grayscale";
+            this.menuBatchGrayscale.Click += new System.EventHandler(this.menuBatchGrayscale_Click);
+            // 
+            // menuBatchTransparency
+            // 
+            this.menuBatchTransparency.Name = "menuBatchTransparency";
+            this.menuBatchTransparency.Size = new System.Drawing.Size(172, 22);
+            this.menuBatchTransparency.Text = "Transparency";
+            this.menuBatchTransparency.Click += new System.EventHandler(this.menuBatchTransparency_Click);
+            // 
+            // menuBatchSepia
+            // 
+            this.menuBatchSepia.Name = "menuBatchSepia";
+            this.menuBatchSepia.Size = new System.Drawing.Size(172, 22);
+            this.menuBatchSepia.Text = "Apply Sepia";
+            this.menuBatchSepia.Click += new System.EventHandler(this.menuBatchSepia_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(169, 6);
+            // 
+            // menuBatchResetAdjustments
+            // 
+            this.menuBatchResetAdjustments.Name = "menuBatchResetAdjustments";
+            this.menuBatchResetAdjustments.Size = new System.Drawing.Size(172, 22);
+            this.menuBatchResetAdjustments.Text = "Reset Adjustments";
+            this.menuBatchResetAdjustments.Click += new System.EventHandler(this.menuBatchResetAdjustments_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(205, 6);
+            // 
+            // menuExportChannels
+            // 
+            this.menuExportChannels.Name = "menuExportChannels";
+            this.menuExportChannels.Size = new System.Drawing.Size(208, 22);
+            this.menuExportChannels.Text = "Export Channels";
+            this.menuExportChannels.Click += new System.EventHandler(this.menuExportChannels_Click);
             // 
             // menuGrayscale
             // 
@@ -282,6 +381,13 @@
             this.menuGrayscale.Text = "Apply Grayscale";
             this.menuGrayscale.Click += new System.EventHandler(this.menuGrayscale_Click);
             // 
+            // menuTransparency
+            // 
+            this.menuTransparency.Name = "menuTransparency";
+            this.menuTransparency.Size = new System.Drawing.Size(208, 22);
+            this.menuTransparency.Text = "Transparency";
+            this.menuTransparency.Click += new System.EventHandler(this.MenuTransparency);
+            // 
             // menuSepia
             // 
             this.menuSepia.Name = "menuSepia";
@@ -289,29 +395,17 @@
             this.menuSepia.Text = "Apply Sepia";
             this.menuSepia.Click += new System.EventHandler(this.menuSepia_Click);
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(205, 6);
+            // 
             // menuResetAdjustments
             // 
             this.menuResetAdjustments.Name = "menuResetAdjustments";
             this.menuResetAdjustments.Size = new System.Drawing.Size(208, 22);
             this.menuResetAdjustments.Text = "Reset Image Adjustments";
             this.menuResetAdjustments.Click += new System.EventHandler(this.menuResetAdjustments_Click);
-            // 
-            // menuRestImage
-            // 
-            this.menuRestImage.Name = "menuRestImage";
-            this.menuRestImage.Size = new System.Drawing.Size(205, 6);
-            // 
-            // menuExportChannels
-            // 
-            this.menuExportChannels.Name = "menuExportChannels";
-            this.menuExportChannels.Size = new System.Drawing.Size(208, 22);
-            this.menuExportChannels.Text = "Export Channlels";
-            this.menuExportChannels.Click += new System.EventHandler(this.menuExportChannels_Click);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(205, 6);
             // 
             // menuFitWindow
             // 
@@ -326,25 +420,6 @@
             this.menuResetStretching.Size = new System.Drawing.Size(208, 22);
             this.menuResetStretching.Text = "Reset Stretching";
             this.menuResetStretching.Click += new System.EventHandler(this.MenuResetStretching_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(205, 6);
-            // 
-            // menuTest
-            // 
-            this.menuTest.Name = "menuTest";
-            this.menuTest.Size = new System.Drawing.Size(208, 22);
-            this.menuTest.Text = "Test";
-            this.menuTest.Click += new System.EventHandler(this.menuTest_Click);
-            // 
-            // menuKanyeQuest
-            // 
-            this.menuKanyeQuest.Name = "menuKanyeQuest";
-            this.menuKanyeQuest.Size = new System.Drawing.Size(208, 22);
-            this.menuKanyeQuest.Text = "Kanye Quest";
-            this.menuKanyeQuest.Click += new System.EventHandler(this.MenuKanyeQuest_Click);
             // 
             // menuWindow
             // 
@@ -377,6 +452,13 @@
             this.menuDisplayBGInfo.Text = "Display BG Colour Info";
             this.menuDisplayBGInfo.Click += new System.EventHandler(this.MenuDisplayBGInfo_Click);
             // 
+            // forEachTestToolStripMenuItem
+            // 
+            this.forEachTestToolStripMenuItem.Name = "forEachTestToolStripMenuItem";
+            this.forEachTestToolStripMenuItem.Size = new System.Drawing.Size(86, 20);
+            this.forEachTestToolStripMenuItem.Text = "ForEach Test";
+            this.forEachTestToolStripMenuItem.Click += new System.EventHandler(this.forEachTestToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -395,6 +477,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.flowLayoutPanel2.ResumeLayout(false);
             this.flowLayoutPanel2.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -427,13 +511,9 @@
         private System.Windows.Forms.ToolStripMenuItem menuChangeBG;
         private System.Windows.Forms.ToolStripMenuItem menuResetStretching;
         private System.Windows.Forms.ToolStripMenuItem menuTransparency;
-        private System.Windows.Forms.ToolStripMenuItem menuKanyeQuest;
         private System.Windows.Forms.ToolStripMenuItem menuResetBGColour;
         private System.Windows.Forms.ToolStripMenuItem menuDisplayBGInfo;
-        private System.Windows.Forms.ToolStripMenuItem menuTest;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem menuGrayscale;
-        private System.Windows.Forms.ToolStripSeparator menuRestImage;
         private System.Windows.Forms.ToolStripMenuItem menuSepia;
         private System.Windows.Forms.SaveFileDialog saveImageDialog;
         public System.Windows.Forms.PictureBox pictureBox1;
@@ -441,6 +521,18 @@
         private System.Windows.Forms.ToolStripMenuItem menuExportChannels;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem menuAddAnother;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button btnNavigateRight;
+        private System.Windows.Forms.Button btnNavigateLeft;
+        private System.Windows.Forms.ToolStripMenuItem forEachTestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem menuBatch;
+        private System.Windows.Forms.ToolStripMenuItem menuBatchChannels;
+        private System.Windows.Forms.ToolStripMenuItem menuBatchGrayscale;
+        private System.Windows.Forms.ToolStripMenuItem menuBatchTransparency;
+        private System.Windows.Forms.ToolStripMenuItem menuBatchSepia;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem menuBatchResetAdjustments;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
     }
 }
 

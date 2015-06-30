@@ -17,8 +17,6 @@ C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPict
 C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.csprojResolveAssemblyReference.cache
 C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.Form1.resources
 C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.Properties.Resources.resources
-C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.testDialog.resources
-C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.YaMomma.resources
 C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.csproj.GenerateResource.Cache
 C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.Brightness.resources
 C:\Users\Christopher\SkyDrive\PROJECT\VisualStudioProjects\PictureViewer\WfaPictureViewer\WfaPictureViewer\obj\Debug\WfaPictureViewer.Grayscale.resources

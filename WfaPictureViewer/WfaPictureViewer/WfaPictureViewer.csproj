@@ -69,20 +69,8 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="testDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="testDialog.Designer.cs">
-      <DependentUpon>testDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="YaMomma.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="YaMomma.Designer.cs">
-      <DependentUpon>YaMomma.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Brightness.resx">
       <DependentUpon>Brightness.cs</DependentUpon>
     </EmbeddedResource>
@@ -104,12 +92,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="testDialog.resx">
-      <DependentUpon>testDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="YaMomma.resx">
-      <DependentUpon>YaMomma.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

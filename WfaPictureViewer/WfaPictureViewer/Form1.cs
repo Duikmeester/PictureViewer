@@ -123,6 +123,7 @@ namespace WfaPictureViewer
                 else if (currentImgListIndex < listLoadedImg.Count)
                     listLoadedImg.Insert(currentImgListIndex + 1, img);
 
+                UpdateImgOptions();
                 UpdateText();
             }
         }
@@ -160,8 +161,11 @@ namespace WfaPictureViewer
         // Update the picbox with a passed image, ususally straight from the Load event ^
         private void UpdatePicBox(LoadedImage img)
         {
-            // Assign passed img to current and picbox
+            // Assign current img to current and picbox
             pictureBox1.Image = currentImg = img.currentVer;
+
+            pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
+
             // Passing the new image's name to the PictureBox1 Tag field
             pictureBox1.Tag = img.name;
             currnetOriginalImg = img.originalVer;
@@ -192,6 +196,16 @@ namespace WfaPictureViewer
                 UpdatePicBox(listLoadedImg[currentImgListIndex]);
             }
 
+        }
+
+        private void btnNavigateLeft_Click(object sender, EventArgs e)
+        {
+            StepThroughImgList(-1);
+        }
+
+        private void btnNavigateRight_Click(object sender, EventArgs e)
+        {
+            StepThroughImgList(1);
         }
 
         private void MenuSaveImage_Click(object sender, EventArgs e)
@@ -270,7 +284,6 @@ namespace WfaPictureViewer
                     // And make sure this new correct value is actually being displayed
                     UpdatePicboxInfo();
                 }
-
             }
             else
             {
@@ -353,7 +366,24 @@ namespace WfaPictureViewer
         {
             if (pictureBox1.Image != null)
             {
-                pictureBox1.Image = currentImg = ApplyGrayscale(currentImg);
+                Grayscale dlgGrayscale = new Grayscale();
+                DialogResult dlgResult;
+                dlgResult = dlgGrayscale.ShowDialog();
+
+                // The 'Luminosity' button is set to "OK".
+                if (dlgResult == DialogResult.OK)
+                {
+                    pictureBox1.Image = currentImg = ApplyGrayscale(currentImg, "luminosity");
+                }
+                // The 'Average' button is set to "Yes".
+                else if (dlgResult == DialogResult.Yes)
+                {
+                    pictureBox1.Image = currentImg = ApplyGrayscale(currentImg, "average");
+                }
+                else
+                {
+                    // Nowt.
+                }
             }
         }
 
@@ -371,69 +401,44 @@ namespace WfaPictureViewer
             {
                 if (dlgChannels.ShowDialog() == DialogResult.OK)
                 {
-                    if (dlgChannels.colourChannel == "R" || dlgChannels.colourChannel == "G" || dlgChannels.colourChannel == "B" || dlgChannels.colourChannel == "A")
-                    {
-                        ExportChannel(dlgChannels.colourChannel, currentImg);
-                    }
-                    else if (dlgChannels.colourChannel == "All")
-                    {
-                        // Runs the method once for each channel
-                        ExportChannel("R", currentImg);
-                        ExportChannel("G", currentImg);
-                        ExportChannel("B", currentImg);
-                        ExportChannel("A", currentImg);
-                    }
-                    else if (dlgChannels.colourChannel == "AllBW")
-                    {
-                        ExportChannel("R", currentImg);
-                        ExportChannel("G", currentImg);
-                        ExportChannel("B", currentImg);
-                        ExportChannel("ABW", currentImg);
-                    }
-                    else
-                    {
-                        MessageBox.Show("An error occurred when registering choice of colour channel.");
-                    }
+                    ExportChannelMediator(dlgChannels.colourChannel);
                 }
             }
         }
 
-        private void menuTest_Click(object sender, EventArgs e)
+        private void ExportChannelMediator(string colourChannel)
         {
-            // Initialising the new form, using the Form name as the Type. Becuase it is a struct, the 'new' keyword is required.
-            // There is a constructor in the testDialog class that takes a Form1 Type, Form1 or "this" is being passed in to that constructor.
-            testDialog dlgTest = new testDialog(this);
-
-            // "DialogResult" Is a property that is assigned in the designer. 
-            if (dlgTest.ShowDialog(this) == DialogResult.OK)
+            if (colourChannel == "R" || colourChannel == "G" || colourChannel == "B" || colourChannel == "A")
             {
-                MessageBox.Show("You clicked OK");
+                ExportChannel(colourChannel, currentImg);
+            }
+            else if (colourChannel == "All")
+            {
+                // Runs the method once for each channel
+                ExportChannel("R", currentImg);
+                ExportChannel("G", currentImg);
+                ExportChannel("B", currentImg);
+                ExportChannel("A", currentImg);
+            }
+            else if (colourChannel == "AllBW")
+            {
+                ExportChannel("R", currentImg);
+                ExportChannel("G", currentImg);
+                ExportChannel("B", currentImg);
+                ExportChannel("ABW", currentImg);
             }
             else
             {
-                Console.WriteLine("Cancelled");
+                MessageBox.Show("An error occurred when registering choice of colour channel.");
             }
-            dlgTest.Dispose();
         }
-
         private void menuResetAdjustments_Click(object sender, EventArgs e)
         {
             if (pictureBox1.Image != null)
             {
-                //UpdatePicBox(currnetOriginalImg);
-                UpdatePicBox(listLoadedImg[0]);
-            }
-        }
-
-        private void MenuKanyeQuest_Click(object sender, EventArgs e)
-        {
-            YaMomma dlgYaMomma = new YaMomma(this);
-
-            // If succesful, close the dlgBox
-            if (dlgYaMomma.ShowDialog(this) == DialogResult.Yes)
-            {
-                dlgYaMomma.Close();
-                dlgYaMomma.Dispose();
+                // Reverting the class' current image to match the original
+                listLoadedImg[currentImgListIndex].currentVer = listLoadedImg[currentImgListIndex].originalVer;
+                UpdatePicBox(listLoadedImg[currentImgListIndex]);
             }
         }
 
@@ -443,7 +448,7 @@ namespace WfaPictureViewer
             BackColor = tempBGColor;
             menuResetBGColour.Enabled = false;
         }
-
+         
         private void MenuDisplayBGInfo_Click(object sender, EventArgs e)
         {
             // Now, a single variable can be changed, as opposed to many. Should consider creating a function that takes a passed value
@@ -463,6 +468,96 @@ namespace WfaPictureViewer
 
             // Because 'Color' is a struct, you cannot assign it 'null', instead the 'Empty' value is assigned.
             colourToTest = Color.Empty;
+        }
+
+        /*private void menuBatchChannels_Click(object sender, EventArgs e)
+        {
+            using (Channels dlgChannels = new Channels())
+            {
+                if (dlgChannels.ShowDialog() == DialogResult.OK)
+                {
+                    // Saving the currentImage to be restored after batching
+                    LoadedImage tmpCurImg = listLoadedImg[currentImgListIndex];
+
+                    if (dlgChannels.colourChannel == "R" || dlgChannels.colourChannel == "G" || dlgChannels.colourChannel == "B" || dlgChannels.colourChannel == "A")
+                    {
+                        foreach (LoadedImage img in listLoadedImg)
+                        {
+                            // Load each image in turn
+                            UpdatePicBox(img);
+                            ExportChannel(dlgChannels.colourChannel, currentImg);
+                        }
+                    }
+                    else if (dlgChannels.colourChannel == "All")
+                    {
+                        // Execute channel exporting on each item in list
+                        foreach (LoadedImage img in listLoadedImg)
+                        {
+                            // Load each image in turn, and run the methods once for each channel
+                            UpdatePicBox(img);
+                            ExportChannel("R", currentImg);
+                            ExportChannel("G", currentImg);
+                            ExportChannel("B", currentImg);
+                            ExportChannel("A", currentImg);
+                            UpdatePicBox(tmpCurImg);
+                        }
+                    }
+                    else if (dlgChannels.colourChannel == "AllBW")
+                    {
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("An error occurred when registering choice of colour channel.");
+                    }
+                }
+            }
+        }*/
+
+        private void menuBatchChannels_Click(object sender, EventArgs e)
+        {
+            using (Channels dlgChannels = new Channels())
+            {
+
+                if (dlgChannels.ShowDialog() == DialogResult.OK)
+                {
+                    // Create a temp image to return to after batching
+                    LoadedImage tmpImage = listLoadedImg[currentImgListIndex];
+
+                    foreach (LoadedImage img in listLoadedImg)
+                    {
+                        UpdatePicBox(img);
+                        ExportChannelMediator(dlgChannels.colourChannel);
+                    }
+                    UpdatePicBox(tmpImage);
+                }
+            }
+        }
+
+        private void menuBatchGrayscale_Click(object sender, EventArgs e)
+        {
+            using (Grayscale dlgGrayscale = new Grayscale())
+            {
+                if (dlgGrayscale.ShowDialog() == DialogResult.OK)
+                {
+
+                }
+            }
+        }
+
+        private void menuBatchTransparency_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void menuBatchSepia_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void menuBatchResetAdjustments_Click(object sender, EventArgs e)
+        {
+
         }
 
         // Known as an "Event Handler" becuase they are called when an event occurs in the program
@@ -644,10 +739,19 @@ namespace WfaPictureViewer
                 menuResetAdjustments.Enabled = true;
                 menuAddAnother.Enabled = true;
 
-                // If there is more than one image loaded, only allow "add".
+                // If there is one or more images loaded, only allow "add".
                 if (listLoadedImg.Count >= 1)
                 {
                     menuLoadImage.Enabled = false;
+                    // If there is at least 2 images loaded
+                    if(listLoadedImg.Count >= 2)
+                    {
+                        menuBatch.Enabled = true;
+                    }
+                    else
+                    {
+                        menuBatch.Enabled = false;
+                    }
                 }
 
                 // Activate or deactivate stretching-specific menu items depending on whether stretching is enabled
@@ -660,6 +764,41 @@ namespace WfaPictureViewer
                 {
                     menuResetStretching.Enabled = false;
                     menuFitWindow.Enabled = true;
+                }
+
+                // If there is something in the list
+                if (listLoadedImg.Count > 0)
+                {
+                    // If the list only has one item
+                    if (listLoadedImg.Count == 1)
+                    {
+                        btnNavigateRight.Enabled = false;
+                        btnNavigateLeft.Enabled = false;
+                    }
+                    // if it has more than one, and user is on the first
+                    else if (listLoadedImg.Count > 1 && currentImgListIndex == 0)
+                    {
+                        btnNavigateRight.Enabled = true;
+                        btnNavigateLeft.Enabled = false;
+                    }
+                    // if on the last item, and there is more than one
+                    else if (currentImgListIndex == listLoadedImg.Count - 1 && listLoadedImg.Count > 1)
+                    {
+                        btnNavigateRight.Enabled = false;
+                        btnNavigateLeft.Enabled = true;
+                    }
+                    // Otherwise, acrtivate them both
+                    else
+                    {
+                        btnNavigateLeft.Enabled = true;
+                        btnNavigateRight.Enabled = true;
+                    }
+                }
+                // If nothing in list
+                else
+                {
+                    btnNavigateRight.Enabled = false;
+                    btnNavigateLeft.Enabled = false;
                 }
 
             }
@@ -677,6 +816,11 @@ namespace WfaPictureViewer
                 menuExportChannels.Enabled = false;
                 menuResetAdjustments.Enabled = false;
                 menuAddAnother.Enabled = false;
+
+                btnNavigateLeft.Enabled = false;
+                btnNavigateRight.Enabled = false;
+
+                menuBatch.Enabled = false;
             }
 
         }
@@ -700,10 +844,10 @@ namespace WfaPictureViewer
         }
 
         // Apply transparency to the supplied image, defaulting the value to 100
-        public Bitmap ApplyTransparency(Bitmap sourceImg, byte newAlphaAmount = 100)
+        public Bitmap ApplyTransparency(Bitmap passedImg, byte newAlphaAmount = 100)
         {
-            /*// Getting a correctly formatted image from GetArgbVer, This might not be necessary depending on how the picturebox stores the image, will check afterwards. 
-            Bitmap updatedImg = GetArgbVer(sourceImg);*/
+            // Creating a new memory assignment, so the pointer(I think) doesn't chance the originalImg
+            Bitmap sourceImg = new Bitmap(passedImg);
 
             // Using BitmapData, the Lockbits method can be used to extract the image's pixel pixelData
             // Lockbits 'locks' a bitmap in to memory
@@ -737,14 +881,17 @@ namespace WfaPictureViewer
             pixelByteArray = null;
             pixelData = null;
 
+            // Passing the new edited version of the iamge to the class object
+            listLoadedImg[currentImgListIndex].currentVer = sourceImg;
+
             return sourceImg;
         }
 
         // Convert the image to Grayscale
-        public Bitmap ApplyGrayscale(Bitmap sourceImg)
+        public Bitmap ApplyGrayscale(Bitmap passedImg, string algorithm)
         {
-            /*// Get a usable Bitmpa from the source image
-            Bitmap updatedImg = GetArgbVer(sourceImg);*/
+            // Creating a new memory assignment, so the pointer(I think) doesn't chance the originalImg
+            Bitmap sourceImg = new Bitmap(passedImg);
 
             // Get the bit data from the image and draw it in to imgData
             BitmapData imgData = sourceImg.LockBits(new Rectangle(0, 0, sourceImg.Width, sourceImg.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
@@ -758,15 +905,10 @@ namespace WfaPictureViewer
             // Copy data from the pointer to the buffer
             Marshal.Copy(dataPointer, pixelByteBuffer, 0, pixelByteBuffer.Length);
 
-            Grayscale dlgGrayscale = new Grayscale();
-            DialogResult dlgResult;
-            dlgResult =  dlgGrayscale.ShowDialog();
-
             // This will be used to hold the sum of the RGB values, and will be applied to each in turn
             float rgb;
 
-            // The 'Luminosity' button is set to "OK".
-            if (dlgResult == DialogResult.OK)
+            if (algorithm == "luminosity")
             {
                 for (int i = 0; i < pixelByteBuffer.Length; i += 4)
                 {
@@ -779,8 +921,7 @@ namespace WfaPictureViewer
                     pixelByteBuffer[i + 2] = pixelByteBuffer[i + 1] = pixelByteBuffer[i] = (byte)rgb;
                 }
             }
-            // The 'Average' button is set to "Yes".
-            else if (dlgResult == DialogResult.Yes)
+            else if (algorithm == "average")
             {
                 for (int i = 0; i < pixelByteBuffer.Length; i += 4)
                 {
@@ -804,13 +945,16 @@ namespace WfaPictureViewer
             pixelByteBuffer = null;
             imgData = null;
 
+            // Passing the new edited version of the iamge to the class object
+            listLoadedImg[currentImgListIndex].currentVer = sourceImg;
+
             return sourceImg;
         }
 
-        public Bitmap ApplySepia(Bitmap sourceImg)
+        public Bitmap ApplySepia(Bitmap passedImg)
         {
-            /*// Get a Bitmap formatted version of the source image
-            Bitmap convertedImg = GetArgbVer(sourceImg);*/
+            // Creating a new memory assignment, so the pointer(I think) doesn't chance the originalImg
+            Bitmap sourceImg = new Bitmap(passedImg);
 
             // Lock the pixel data from the source image into imgData, a BitmapData Type container. 
             BitmapData imgData = sourceImg.LockBits(new Rectangle(0, 0, sourceImg.Width, sourceImg.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
@@ -836,9 +980,7 @@ namespace WfaPictureViewer
                 R = 0;
 
                 B = (imgBuffer[i] * 0.13f + imgBuffer[i + 1] * 0.53f + imgBuffer[i + 2] * 0.27f);
-
                 G = (imgBuffer[i] * 0.16f + imgBuffer[i + 1] * 0.68f + imgBuffer[i + 2] * 0.34f);
-
                 R = (imgBuffer[i] * 0.18f + imgBuffer[i + 1] * 0.76f + imgBuffer[i + 2] * 0.39f);
 
                 if (B > 255)
@@ -851,9 +993,7 @@ namespace WfaPictureViewer
                     R = 255;
 
                 imgBuffer[i] = (byte)B;
-
                 imgBuffer[i + 1] = (byte)G;
-
                 imgBuffer[i + 2] = (byte)R;
 
             }
@@ -866,6 +1006,9 @@ namespace WfaPictureViewer
 
             imgBuffer = null;
             imgData = null;
+
+            // Passing the new edited version of the iamge to the class object
+            listLoadedImg[currentImgListIndex].currentVer = sourceImg;
 
             return sourceImg;
         }
@@ -892,7 +1035,7 @@ namespace WfaPictureViewer
                 case "R":
                     bytesToChange[0] = 0;
                     bytesToChange[1] = 1;
-                    bytesToChange[2] = 1; // Duped to avoid editing the alpha
+                    bytesToChange[2] = 1; // Duped to avoid editing the alpha - Maybe look at creating the array inside here? 
                     value = 0;
                     break;
                 case "G":
@@ -933,14 +1076,10 @@ namespace WfaPictureViewer
                 imgBuffer[i + bytesToChange[1]] = value;
                 imgBuffer[i + bytesToChange[2]] = value;
             }
-
             Marshal.Copy(imgBuffer, 0, dataPointer, imgBuffer.Length);
-
             channelImg.UnlockBits(imgData);
 
-            
-
-            // Creating an instance of the dialog to hold 
+            // Creating a minimally scoped instance of the dialog 
             using (SaveFileDialog dlgSaveChannel = new SaveFileDialog())
             {
                 // Converging the alphas for the puspose of savedialog creation
@@ -950,24 +1089,11 @@ namespace WfaPictureViewer
                 dlgSaveChannel.FileName = (Path.GetFileNameWithoutExtension(pictureBox1.Tag.ToString()) + "_" + channel);
                 dlgSaveChannel.InitialDirectory = "C:/Desktop";
                 dlgSaveChannel.Title = "Save (" + channel + ") Image Channel";
-
-                if (channel == "A")
-                {
-                    dlgSaveChannel.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
-                }
-                else
-                {
-                    dlgSaveChannel.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
-                }
-
+                dlgSaveChannel.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
 
                 if (dlgSaveChannel.ShowDialog() == DialogResult.OK)
                 {
                     SaveImage(dlgSaveChannel, channelImg);
-                }
-                else
-                {
-                    // Saving failed
                 }
             }
             channel = null;
@@ -975,16 +1101,20 @@ namespace WfaPictureViewer
             imgData = null;
         }
 
-        public void TestFunction(int x)
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
-            MessageBox.Show(pictureBox1.Image.ToString());
-            //MessageBox.Show(x.ToString());
-            //chkStretch.Checked = !chkStretch.Checked;
+
         }
 
-        public void TestFunction2(string whatKanyeGot)
+        private void forEachTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            if (listLoadedImg.Count > 0)
+            {
+                foreach (LoadedImage chunk in listLoadedImg)
+                {
+                    MessageBox.Show(chunk.name);
+                }
+            }
         }
     }
 
