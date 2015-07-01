@@ -71,8 +71,6 @@ namespace WfaPictureViewer
                 StepThroughImgList(-1);
         }
 
-
-
         private void Form1_Load(object sender, EventArgs e)
         {
 
@@ -102,7 +100,6 @@ namespace WfaPictureViewer
                 currentImgListIndex = 0;
                 UpdatePicBox(listLoadedImg[currentImgListIndex]);
             }
-
         }
 
         private void menuAddAnother_Click(object sender, EventArgs e)
@@ -138,25 +135,6 @@ namespace WfaPictureViewer
             listLoadedImg[currentImgListIndex] = null;
             StepThroughImgList(1);
         }
-
-        /*// Update the picbox with a passed image, ususally straight from the Load event ^
-        private void UpdatePicBox(Bitmap img)
-        {
-            // Assign passed img to current and picbox
-            pictureBox1.Image = currentImg = img;
-
-            curCorrectRatio = (float)pictureBox1.Image.Width / (float)pictureBox1.Image.Height;
-            UpdateImgOptions();
-
-            // Updating the display info
-            UpdatePicboxInfo();
-            UpdateText();
-
-            if (chkAutoscaleLoad.Checked)
-            {
-                menuFitWindow.PerformClick();
-            }
-        }*/
 
         // Update the picbox with a passed image, ususally straight from the Load event ^
         private void UpdatePicBox(LoadedImage img)
@@ -220,9 +198,7 @@ namespace WfaPictureViewer
             
                 // Only initiate save if OK is received
                 if (dlgSaveImg.ShowDialog() == DialogResult.OK)
-                {
                     SaveImage(dlgSaveImg, currentImg);
-                }
             }
         }
 
@@ -274,21 +250,27 @@ namespace WfaPictureViewer
                     currentImgListIndex = 0;
                     UpdateText();
                     UpdatePicboxInfo();
+                    UpdateImgOptions();
                 }
+                // If there is still an image loaded
                 else
                 {
-                    // Adjust for the lost list item, this is only done if there is actually images loaded
-                    currentImgListIndex -= 1;
-                    // UpdatePicBox with the new list index
-                    UpdatePicBox(listLoadedImg[currentImgListIndex]);
-                    // And make sure this new correct value is actually being displayed
-                    UpdatePicboxInfo();
+                    // if on first index, list steps forward, load the new first object
+                    if (currentImgListIndex == 0)
+                    {
+                        UpdatePicBox(listLoadedImg[currentImgListIndex]);
+                    }
+                    // If not, adjust index int and refresh with new image
+                    else
+                    {
+                        currentImgListIndex -= 1;
+                        UpdatePicBox(listLoadedImg[currentImgListIndex]);
+                    }
+               
                 }
             }
             else
-            {
                 MessageBox.Show("No image currently being displayed");
-            }
         }
 
         private void MenuCopyImage_Click(object sender, EventArgs e)
@@ -315,10 +297,8 @@ namespace WfaPictureViewer
         {
             // Runs the colour dialog in the if(), and if the user selects OK
             if (colourDialog1.ShowDialog() == DialogResult.OK)
-            {
-                // Change background colour to whatever the color dialog value was
                 BackColor = colourDialog1.Color;
-            }
+
             menuResetBGColour.Enabled = true;
         }
         
@@ -330,7 +310,7 @@ namespace WfaPictureViewer
             this.Size = new Size(picWidth + 149, picHeight + 72);
         }
 
-        // Adjust the Brightness (and eventually Contrast) 
+        // Adjust the Transparency (and eventually Contrast) 
         private void MenuTransparency(object sender, EventArgs e)
         {
             if (pictureBox1.Image != null)
@@ -338,27 +318,23 @@ namespace WfaPictureViewer
                 // The byte value is necessary for the image adjustments
                 byte amount = 0;
                 // Creating the Form that will be the dialog box
-                Brightness dlgBright = new Brightness();
-
-                // Result is saved before check, so the result can be checked in more than one bool statement
-                DialogResult dlgResult =  dlgBright.ShowDialog();
-
-                if (dlgResult == DialogResult.OK)
+                using (Transparency dlgBright = new Transparency())
                 {
-                    // This method allows the data to be accessed without being public
-                    amount =  dlgBright.getAmount();
-                    pictureBox1.Image = currentImg = ApplyTransparency(currentImg, amount);
-                }
-                else if(dlgResult == DialogResult.Cancel)
-                {
-                    // Nowt
-                }
-                else
-                {
-                    MessageBox.Show("Error");
-                }
+                    // Result is saved before check, so the result can be checked in more than one bool statement
+                    DialogResult dlgResult = dlgBright.ShowDialog();
 
-                dlgBright.Dispose();
+                    if (dlgResult == DialogResult.OK)
+                    {
+                        // This method allows the data to be accessed without being public
+                        amount = dlgBright.getAmount();
+
+                        pictureBox1.Image = listLoadedImg[currentImgListIndex].currentVer = currentImg = ApplyTransparency(currentImg, amount);
+                    }
+                    else if (dlgResult == DialogResult.Cancel)
+                        // Nowt
+                    else
+                        MessageBox.Show("Error");
+                }
             }
         }
 
@@ -372,27 +348,18 @@ namespace WfaPictureViewer
 
                 // The 'Luminosity' button is set to "OK".
                 if (dlgResult == DialogResult.OK)
-                {
                     pictureBox1.Image = listLoadedImg[currentImgListIndex].currentVer = currentImg = ApplyGrayscale(currentImg, "luminosity");
-                }
+
                 // The 'Average' button is set to "Yes".
                 else if (dlgResult == DialogResult.Yes)
-                {
                     pictureBox1.Image = listLoadedImg[currentImgListIndex].currentVer = currentImg = ApplyGrayscale(currentImg, "average");
-                }
-                else
-                {
-                    // Nowt.
-                }
             }
         }
 
         private void menuSepia_Click(object sender, EventArgs e)
         {
             if (pictureBox1.Image != null)
-            {
-                pictureBox1.Image = currentImg = ApplySepia(currentImg);
-            }
+                 pictureBox1.Image = listLoadedImg[currentImgListIndex].currentVer = currentImg = ApplySepia(currentImg);
         }        
 
         private void menuExportChannels_Click(object sender, EventArgs e)
@@ -400,18 +367,15 @@ namespace WfaPictureViewer
             using (Channels dlgChannels = new Channels()) 
             {
                 if (dlgChannels.ShowDialog() == DialogResult.OK)
-                {
                     ExportChannelMediator(dlgChannels.colourChannel);
-                }
             }
         }
 
         private void ExportChannelMediator(string colourChannel)
         {
             if (colourChannel == "R" || colourChannel == "G" || colourChannel == "B" || colourChannel == "A")
-            {
                 ExportChannel(colourChannel, currentImg);
-            }
+
             else if (colourChannel == "All")
             {
                 // Runs the method once for each channel
@@ -428,9 +392,7 @@ namespace WfaPictureViewer
                 ExportChannel("ABW", currentImg);
             }
             else
-            {
                 MessageBox.Show("An error occurred when registering choice of colour channel.");
-            }
         }
         private void menuResetAdjustments_Click(object sender, EventArgs e)
         {
@@ -499,6 +461,7 @@ namespace WfaPictureViewer
                 {
                     foreach (LoadedImage img in listLoadedImg)
                     {
+                        // Only editing the actual class' image, since it isn't displayed
                         img.currentVer = ApplyGrayscale(img.currentVer, "luminosity");
                     }
                 }
@@ -506,7 +469,7 @@ namespace WfaPictureViewer
                 {
                     foreach (LoadedImage img in listLoadedImg)
                     {
-                        
+                        img.currentVer = ApplyGrayscale(img.currentVer, "average");
                     }
                 }
                 UpdatePicBox(listLoadedImg[currentImgListIndex]);
@@ -515,17 +478,59 @@ namespace WfaPictureViewer
 
         private void menuBatchTransparency_Click(object sender, EventArgs e)
         {
+            if (pictureBox1.Image != null)
+            {
+                using (Transparency dlgTrans = new Transparency())
+                {
+                    if (dlgTrans.ShowDialog() == DialogResult.OK)
+                    {
+                        byte x = dlgTrans.getAmount();
+                        MessageBox.Show(x.ToString());
 
+                        foreach (LoadedImage img in listLoadedImg)
+                        {
+                            img.currentVer = ApplyTransparency(img.currentVer, x);
+                        }
+                        UpdatePicBox(listLoadedImg[currentImgListIndex]);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("You must first loade an image");
+            }
         }
 
         private void menuBatchSepia_Click(object sender, EventArgs e)
         {
-
+            if (pictureBox1.Image != null)
+            {
+                foreach (LoadedImage img in listLoadedImg)
+                {
+                    img.currentVer = ApplySepia(img.currentVer);
+                }
+                UpdatePicBox(listLoadedImg[currentImgListIndex]);
+            }
+            else
+            {
+                MessageBox.Show("You must first loade an image");
+            }
         }
 
         private void menuBatchResetAdjustments_Click(object sender, EventArgs e)
         {
-
+            if (pictureBox1.Image != null)
+            {
+                foreach(LoadedImage img in listLoadedImg)
+                {
+                    img.currentVer = img.originalVer;
+                }
+                UpdatePicBox(listLoadedImg[currentImgListIndex]);
+            }
+            else
+            {
+                MessageBox.Show("You must first loade an image");
+            }
         }
 
         // Known as an "Event Handler" becuase they are called when an event occurs in the program
@@ -560,42 +565,24 @@ namespace WfaPictureViewer
          * METHODS
          *///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // A method for converting an image in to 
-        public byte[] ImgToByteArray (Image imgIn)
-        {
-            MemoryStream ms = new MemoryStream();
-            MessageBox.Show(imgIn.ToString());
-            // The image is saved to the MemoryStream in it's native format
-            imgIn.Save(ms, imgIn.RawFormat);
-
-            // The MemoryStream is converted to a byte array and returned
-            return ms.ToArray();
-        }
-
         private void UpdatePicboxInfo()
         {
-            if (pictureBox1.Image != null)
-            {
-                // Writing the file info to the label
+            // Writing the file info to the label
+            if (pictureBox1.Image != null)                
                 lblPicInfo.Text = ("File Name: " + pictureBox1.Tag + Environment.NewLine + "H: " + pictureBox1.Image.Height + Environment.NewLine + "W: " + pictureBox1.Image.Width + Environment.NewLine + "Aspect Ratio: " + GetPicBoxRatio() + Environment.NewLine + "Stretching: " + GetRatioDistortion());
-            }
+   
             else
-            {
                 lblPicInfo.Text = null;
-            }
         }
 
         // Method is called whenever upon changing the state of the picturebox. 
         private void UpdateText()
         {
             if (pictureBox1.Image != null)
-            {
                 lblPicNotifier.Text = "Image " + (currentImgListIndex + 1) + " of " + listLoadedImg.Count;
-            }
+
             else
-            {
                 lblPicNotifier.Text = "Use 'File>Load Image' to get started.";
-            }
         }
 
         private void CycleMaximised()
@@ -677,18 +664,13 @@ namespace WfaPictureViewer
                     return (distortion.ToString("0.000"));
                 }
                 else if (curCorrectRatio == tempPicBoxRatio)
-                {
                     return "Aspect ratio accurate!";
-                }
+
                 else
-                {
                     return "Error";
-                }
             }
             else
-            {
                 return "Aspect ratio accurate!";
-            }
         }
  
         // Update options that require an image to be loaded.
@@ -713,13 +695,10 @@ namespace WfaPictureViewer
                     menuLoadImage.Enabled = false;
                     // If there is at least 2 images loaded
                     if(listLoadedImg.Count >= 2)
-                    {
                         menuBatch.Enabled = true;
-                    }
+
                     else
-                    {
                         menuBatch.Enabled = false;
-                    }
                 }
 
                 // Activate or deactivate stretching-specific menu items depending on whether stretching is enabled
@@ -773,6 +752,7 @@ namespace WfaPictureViewer
             // Disable if image is not currently loaded
             else
             {
+                menuLoadImage.Enabled = true;
                 menuClearImage.Enabled = false;
                 menuCopyImage.Enabled = false;
                 menuFitWindow.Enabled = false;
@@ -826,7 +806,6 @@ namespace WfaPictureViewer
             // A pointer directed at the location of the first pixel read by LockBits. I believe this accesses the B, G, R, A info, as opposed to the pixels themselves
             IntPtr pixelDataPointer = pixelData.Scan0;
 
-            MessageBox.Show(pixelDataPointer.ToString());
             // Here, an array of all the bytes that make up the pixles is created, The stride is the width of the array when also accounting for the extra buffering area.
             byte[] pixelByteArray = new byte[pixelData.Stride * pixelData.Height];
 
@@ -848,9 +827,6 @@ namespace WfaPictureViewer
 
             pixelByteArray = null;
             pixelData = null;
-
-            // Passing the new edited version of the iamge to the class object
-            listLoadedImg[currentImgListIndex].currentVer = sourceImg;
 
             return sourceImg;
         }
@@ -972,9 +948,6 @@ namespace WfaPictureViewer
             imgBuffer = null;
             imgData = null;
 
-            // Passing the new edited version of the iamge to the class object
-            listLoadedImg[currentImgListIndex].currentVer = sourceImg;
-
             return sourceImg;
         }
 
@@ -1031,12 +1004,10 @@ namespace WfaPictureViewer
 
             for (int i = 0; i < imgBuffer.Length; i += 4)
             {
-                // If we're exporting the B/W alpha image
+                // If we're exporting the B/W alpha image, the new value for R, G & B is equal to the alpha channel
                 if (channel == "ABW")
-                {
-                    // The new value for R, G & B is equal to the alpha channel
                     value = imgBuffer[i + 3];
-                }
+
                 imgBuffer[i + bytesToChange[0]] = value;
                 imgBuffer[i + bytesToChange[1]] = value;
                 imgBuffer[i + bytesToChange[2]] = value;
@@ -1057,9 +1028,8 @@ namespace WfaPictureViewer
                 dlgSaveChannel.Filter = "JPEG Image|*.jpg|BMP Image|*.bmp|PNG Image|*.png|TIFF Image|*.tiff";
 
                 if (dlgSaveChannel.ShowDialog() == DialogResult.OK)
-                {
                     SaveImage(dlgSaveChannel, channelImg);
-                }
+
             }
             channel = null;
             imgBuffer = null;
@@ -1083,6 +1053,7 @@ namespace WfaPictureViewer
         }
     }
 
+    // This class object holds key information about each of the loaded images, fully expandable
     public class LoadedImage
     {
         public Bitmap originalVer { get; set; }
