@@ -17,6 +17,7 @@ namespace WfaPictureViewer
         public Brightness()
         {
             InitializeComponent();
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
         }
 
         private void numInput_ValueChanged(object sender, EventArgs e)

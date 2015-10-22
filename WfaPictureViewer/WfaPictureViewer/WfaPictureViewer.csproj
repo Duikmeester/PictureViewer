@@ -44,6 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BatchSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BatchSettings.Designer.cs">
+      <DependentUpon>BatchSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Brightness.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,22 +69,25 @@
       <DependentUpon>Grayscale.cs</DependentUpon>
     </Compile>
     <Compile Include="TestClass.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="PicViewer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="PicViewer.Designer.cs">
+      <DependentUpon>PicViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="BatchSettings.resx">
+      <DependentUpon>BatchSettings.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Brightness.resx">
       <DependentUpon>Brightness.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Channels.resx">
       <DependentUpon>Channels.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="PicViewer.resx">
+      <DependentUpon>PicViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Grayscale.resx">
       <DependentUpon>Grayscale.cs</DependentUpon>

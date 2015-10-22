@@ -15,6 +15,7 @@ namespace WfaPictureViewer
         public Grayscale()
         {
             InitializeComponent();
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
         }
 
         private void btnLuminosity_Click(object sender, EventArgs e)
