@@ -34,7 +34,7 @@
             this.chkStretch = new System.Windows.Forms.CheckBox();
             this.chkAspectLock = new System.Windows.Forms.CheckBox();
             this.pnlPicBox = new System.Windows.Forms.Panel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.picBoxMain = new System.Windows.Forms.PictureBox();
             this.pnlGallery = new System.Windows.Forms.Panel();
             this.flowGallery = new System.Windows.Forms.FlowLayoutPanel();
             this.lblPicInfo = new System.Windows.Forms.Label();
@@ -77,7 +77,7 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.pnlPicBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picBoxMain)).BeginInit();
             this.pnlGallery.SuspendLayout();
             this.pnlNav.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -155,7 +155,7 @@
             // 
             this.pnlPicBox.AutoScroll = true;
             this.pnlPicBox.AutoScrollMinSize = new System.Drawing.Size(100, 100);
-            this.pnlPicBox.Controls.Add(this.pictureBox1);
+            this.pnlPicBox.Controls.Add(this.picBoxMain);
             this.pnlPicBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlPicBox.Location = new System.Drawing.Point(233, 3);
             this.pnlPicBox.Name = "pnlPicBox";
@@ -163,17 +163,17 @@
             this.pnlPicBox.Size = new System.Drawing.Size(429, 310);
             this.pnlPicBox.TabIndex = 8;
             // 
-            // pictureBox1
+            // picBoxMain
             // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(429, 310);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox1.TabIndex = 9;
-            this.pictureBox1.TabStop = false;
+            this.picBoxMain.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.picBoxMain.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.picBoxMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.picBoxMain.Location = new System.Drawing.Point(0, 0);
+            this.picBoxMain.Name = "picBoxMain";
+            this.picBoxMain.Size = new System.Drawing.Size(429, 310);
+            this.picBoxMain.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.picBoxMain.TabIndex = 9;
+            this.picBoxMain.TabStop = false;
             // 
             // pnlGallery
             // 
@@ -196,6 +196,7 @@
             this.flowGallery.Name = "flowGallery";
             this.flowGallery.Size = new System.Drawing.Size(94, 310);
             this.flowGallery.TabIndex = 0;
+            this.flowGallery.WrapContents = false;
             // 
             // lblPicInfo
             // 
@@ -507,7 +508,7 @@
             this.flowLayoutPanel2.PerformLayout();
             this.pnlPicBox.ResumeLayout(false);
             this.pnlPicBox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picBoxMain)).EndInit();
             this.pnlGallery.ResumeLayout(false);
             this.pnlNav.ResumeLayout(false);
             this.pnlNav.PerformLayout();
@@ -562,7 +563,7 @@
         private System.Windows.Forms.Label lblPicNotifier;
         private System.Windows.Forms.Button btnNavigateLeft;
         private System.Windows.Forms.Panel pnlPicBox;
-        public System.Windows.Forms.PictureBox pictureBox1;
+        public System.Windows.Forms.PictureBox picBoxMain;
         private System.Windows.Forms.Panel pnlGallery;
         private System.Windows.Forms.ToolStripMenuItem MenuHideGallery;
         private System.Windows.Forms.FlowLayoutPanel flowGallery;

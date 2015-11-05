@@ -68,6 +68,7 @@
     <Compile Include="Grayscale.Designer.cs">
       <DependentUpon>Grayscale.cs</DependentUpon>
     </Compile>
+    <Compile Include="LoadedImage.cs" />
     <Compile Include="TestClass.cs" />
     <Compile Include="PicViewer.cs">
       <SubType>Form</SubType>

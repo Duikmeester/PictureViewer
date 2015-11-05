@@ -136,9 +136,9 @@
             this.chkBypass.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBypass.Location = new System.Drawing.Point(9, 12);
             this.chkBypass.Name = "chkBypass";
-            this.chkBypass.Size = new System.Drawing.Size(127, 17);
+            this.chkBypass.Size = new System.Drawing.Size(233, 17);
             this.chkBypass.TabIndex = 7;
-            this.chkBypass.Text = "Bypass Save Dialog?";
+            this.chkBypass.Text = "Bypass Save Dialog? (Use current filename)";
             this.chkBypass.UseVisualStyleBackColor = true;
             this.chkBypass.CheckedChanged += new System.EventHandler(this.chkBypass_CheckedChanged);
             // 
